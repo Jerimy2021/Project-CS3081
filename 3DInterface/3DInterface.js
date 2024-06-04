@@ -3,7 +3,7 @@ const canvas = document.getElementById('3DInterface'); // Canvas where the 3D in
 const renderer = new THREE.WebGLRenderer({canvas}); // Renderer for the 3D interface
 const scene = new THREE.Scene(); // Scene where the 3D interface will be rendered
 const camera = new THREE.PerspectiveCamera(75, canvas.width / canvas.height, 0.1, 10000); // Field of view, aspect ratio, near, far
-
+let speed = 0.1; // Speed of the camera
 
 const C = new THREE.Vector3(1, 0, 0); // Camera direction
 const D = new THREE.Vector3(0, 0, -1); // Camera right direction
@@ -61,30 +61,36 @@ function rotationMatrix(F, theta) {
 }
 
 function moveCamera(deltaTime){
-    const speed = 0.1*deltaTime;
     if (moving.forward) {
-        camera.position.addScaledVector(C, speed);
+        camera.position.addScaledVector(C, speed*deltaTime);
     }
     if (moving.backward) {
-        camera.position.addScaledVector(C, -speed);
+        camera.position.addScaledVector(C, -speed*deltaTime);
     }
     if (moving.left) {
-        camera.position.addScaledVector(D, speed);
+        camera.position.addScaledVector(D, speed*deltaTime);
     }
     if (moving.right) {
-        camera.position.addScaledVector(D, -speed);
+        camera.position.addScaledVector(D, -speed*deltaTime);
     }
 }
 
 
 
 // bucle de renderizado ----------------------------
-function render() {
+let lastTime = 0;
+function render(time) {
+    time *= 0.001; // Convertir a segundos
+    const deltaTime = time - lastTime;
+    lastTime = time;
+
     renderer.render(scene, camera);
     lookRespectToVectors(C, D, camera);
-    moveCamera(1);
+    moveCamera(deltaTime);
+
     requestAnimationFrame(render);
 }
+
 
 // iniciar la escena -------------------------------
 function startScene() {
@@ -141,7 +147,6 @@ window.addEventListener('mousemove', (event) => {
 });
 
 window.addEventListener('keydown', (event) => {
-    const speed = 0.1;
     switch (event.key) {
         case 'w':
             moving.forward = true;
