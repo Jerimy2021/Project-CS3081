@@ -1,6 +1,64 @@
 const canvas = document.getElementById('3DInterface'); // Canvas where the 3D interface will be rendered
 
-const renderer = new THREE.WebGLRenderer({canvas}); // Renderer for the 3D interface
+// Pointer Lock API events
+canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
+document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLock || document.webkitExitPointerLock;
+
+let block = false;
+
+canvas.addEventListener('click', () => {
+    if (!block) {
+        canvas.requestPointerLock();
+        block = true;
+    } else {
+        document.exitPointerLock();
+        block = false;
+    }
+});
+
+document.addEventListener('pointerlockchange', onPointerLockChange, false);
+document.addEventListener('mozpointerlockchange', onPointerLockChange, false);
+document.addEventListener('webkitpointerlockchange', onPointerLockChange, false);
+
+function onPointerLockChange() {
+    if (document.pointerLockElement === canvas ||
+        document.mozPointerLockElement === canvas ||
+        document.webkitPointerLockElement === canvas) {
+        document.addEventListener('mousemove', onMouseMove, false);
+    } else {
+        document.removeEventListener('mousemove', onMouseMove, false);
+    }
+}
+
+function onMouseMove(event) {
+    let deltaX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+    let deltaY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+
+    const A = new THREE.Vector3().crossVectors(D, C);
+
+    const thetaSpeed = 0.01;
+
+    let C_ = C.clone();
+    let D_ = D.clone();
+    let C__ = C.clone();
+
+    // C' = R(A, theta) * C
+    C_.applyMatrix3(rotationMatrix(A, deltaX * thetaSpeed));
+    // D' = R(A, theta) * D
+    D_.applyMatrix3(rotationMatrix(A, deltaX * thetaSpeed));
+    // C'' = R(D', theta) * C'
+    C__ = C_.applyMatrix3(rotationMatrix(D_, deltaY * thetaSpeed));
+
+    C.set(C__.x, C__.y, C__.z);
+    D.set(D_.x, D_.y, D_.z);
+
+    // Normalize
+    C.normalize();
+    D.normalize();
+}
+
+// Existing code...
+const renderer = new THREE.WebGLRenderer({ canvas }); // Renderer for the 3D interface
 const scene = new THREE.Scene(); // Scene where the 3D interface will be rendered
 const camera = new THREE.PerspectiveCamera(75, canvas.width / canvas.height, 0.1, 10000); // Field of view, aspect ratio, near, far
 let speed = 0.1; // Speed of the camera
@@ -14,7 +72,6 @@ let moving = { // Camera movement
     right: false
 }
 
-
 // funciones importantes ---------------------------
 function initializeScene() {
     inizializeComponents();
@@ -22,27 +79,26 @@ function initializeScene() {
 }
 
 function inizializeComponents() {
-
-    //crear puntos
+    // Crear puntos
     const n = 10000;
     const geometry = new THREE.SphereGeometry(0.5, 5, 5);
     for (let i = 0; i < n; i++) {
-        const material = new THREE.MeshBasicMaterial({color: Math.random() * 0xffffff});
+        const material = new THREE.MeshBasicMaterial({ color: Math.random() * 0xffffff });
         const cube = new THREE.Mesh(geometry, material);
-        //random position
+        // Random position
         cube.position.x = Math.random() * 1000 - 500;
         cube.position.y = Math.random() * 1000 - 500;
         cube.position.z = Math.random() * 1000 - 500;
         scene.add(cube);
     }
 
-    //dibujar los axes
+    // Dibujar los axes
     const axesHelper = new THREE.AxesHelper(5);
     scene.add(axesHelper);
 }
 
 function lookRespectToVectors(Direction, Right, camera) {
-    //up es el dot product de la direccion y la derecha
+    // Up es el dot product de la dirección y la derecha
     const up = Direction.clone().cross(Right);
     up.normalize();
     camera.up.set(up.x, up.y, up.z);
@@ -60,27 +116,25 @@ function rotationMatrix(F, theta) {
     );
 }
 
-function moveCamera(deltaTime){
+function moveCamera(deltaTime) {
     if (moving.forward) {
-        camera.position.addScaledVector(C, speed*deltaTime);
+        camera.position.addScaledVector(C, speed * deltaTime);
     }
     if (moving.backward) {
-        camera.position.addScaledVector(C, -speed*deltaTime);
+        camera.position.addScaledVector(C, -speed * deltaTime);
     }
     if (moving.left) {
-        camera.position.addScaledVector(D, speed*deltaTime);
+        camera.position.addScaledVector(D, speed * deltaTime);
     }
     if (moving.right) {
-        camera.position.addScaledVector(D, -speed*deltaTime);
+        camera.position.addScaledVector(D, -speed * deltaTime);
     }
 }
-
-
 
 // bucle de renderizado ----------------------------
 let lastTime = 0;
 function render(time) {
-    time *= 0.001; // Convertir a segundos
+    time *= 0.001; // Convert to seconds
     const deltaTime = time - lastTime;
     lastTime = time;
 
@@ -91,59 +145,23 @@ function render(time) {
     requestAnimationFrame(render);
 }
 
-
 // iniciar la escena -------------------------------
 function startScene() {
     initializeScene();
     render();
 }
 
-
-
 // Eventos
 function resizeRenderer() {
-    const canvas = renderer.domElement;
-    const width = canvas.clientWidth;
-    const height = canvas.clientHeight;
-    const needResize = canvas.width !== width || canvas.height !== height;
-    
-    if (needResize) {
-        renderer.setSize(width, height, false);
-        camera.aspect = width / height;
-        camera.updateProjectionMatrix();
-    }
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    renderer.setSize(width, height, false);
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
 }
 
 window.addEventListener('resize', () => {
     resizeRenderer();
-});
-
-window.addEventListener('mousemove', (event) => {
-    let deltaX = event.movementX;
-    let deltaY = event.movementY;
-
-    const A = new THREE.Vector3().crossVectors(D, C);
-
-    const thetaSpeed = 0.01;
-
-    let C_ = C.clone();
-    let D_ = D.clone();
-    let C__ = C.clone();
-
-    //C' = R(A, theta) * C
-    C_.applyMatrix3(rotationMatrix(A, deltaX * thetaSpeed));
-    //D' = R(A, theta) * D
-    D_.applyMatrix3(rotationMatrix(A, deltaX * thetaSpeed));
-    //C'' = R(D', theta) * C'
-    C__ = C_.applyMatrix3(rotationMatrix(D_, deltaY * thetaSpeed));
-
-    C.set(C__.x, C__.y, C__.z);
-    D.set(D_.x, D_.y, D_.z);
-
-    
-    //normalizar
-    C.normalize();
-    D.normalize();  
 });
 
 window.addEventListener('keydown', (event) => {
@@ -179,9 +197,6 @@ window.addEventListener('keyup', (event) => {
             break;
     }
 });
-
-
-
 
 // ================== MAIN ==================
 startScene(); // Start the 3D interface
