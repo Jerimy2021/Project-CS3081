@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 
 export const moveCamera = (deltaTime, camera, C, D, moving, speed) => {
-    console.log(moving);
     if (moving.forward) {
         camera.position.addScaledVector(C, speed * deltaTime);
     }
