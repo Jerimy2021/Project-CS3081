@@ -5,6 +5,9 @@ import { handleResize } from '../utils/resizeHandler';
 import { usePointerLock } from '../hooks/usePointerLock';
 import { moveCamera, lookRespectToVectors } from '../utils/camaraControls'
 import { movingKeysDown, movingKeysUp } from '../utils/camaraControls';
+import { addStellars } from '../utils/sceneSetup';
+
+import { getStellars } from '../utils/apiFunctions';
 
 import '../components/ThreeDInterface.css';
 
@@ -24,7 +27,7 @@ const ThreeDInterface = () => {
         up: false,
         down: false 
     });
-    const speed = 10;
+    const speed = 2;
 
     // stellars
     const stellars = useRef([]);
@@ -32,43 +35,6 @@ const ThreeDInterface = () => {
     // Pointer lock
     usePointerLock(canvasRef, C, D, moving);
 
-
-    const getStellars = () => {
-        stellars.current = [
-            {
-                name: "Earth",
-                mass: "5.972 x 10^24 kg",
-                radius: "6,371 km",
-                rings: "No",
-                discovery: "Prehistoric",
-                orbital_period: "365 days",
-                lifetime: "4.5 billion years",
-                link: "https://en.wikipedia.org/wiki/Earth",
-                textures: {
-                    diffuse: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTwZRT-bo2GcPu_P-Sh-YijtA8FtXYzOUnzA&s",
-                    normal: "",
-                    specular: "",
-                    emissive: "",
-                    opacity: "",
-                    ambient: ""
-                },
-                coordinates: { x: 150, y: 150, z: 0 }
-            },
-
-        ]
-    }
-
-    const getSphere = (stellar) => {
-        let radius = stellar.radius; // Radius of the sphere
-        //convertir radio a float
-        radius = parseFloat(radius.replace(/,/g, ''));
-        const geometry = new THREE.SphereGeometry(radius/100, 32, 32);
-        const texture = new THREE.TextureLoader().load(stellar.textures.diffuse);
-        const material = new THREE.MeshBasicMaterial({ map: texture });
-        const sphere = new THREE.Mesh(geometry, material);
-        sphere.position.set(stellar.coordinates.x, stellar.coordinates.y, stellar.coordinates.z);
-        return sphere;
-    }
 
 
     // Initialize scene
@@ -86,12 +52,9 @@ const ThreeDInterface = () => {
         cameraRef.current = camera;
 
         // Load stellars
-        getStellars();
+        getStellars(stellars);
+        addStellars(scene, stellars);
 
-        stellars.current.forEach((stellar) => {
-            const sphere = getSphere(stellar);
-            scene.add(sphere);
-        });
 
         // Initialize scene
         initializeScene(scene);
