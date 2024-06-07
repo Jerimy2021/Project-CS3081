@@ -14,7 +14,4 @@ export const initializeScene = (scene) => {
         scene.add(cube);
     }
 
-    // Dibujar los axes
-    const axesHelper = new THREE.AxesHelper(5);
-    scene.add(axesHelper);
 };

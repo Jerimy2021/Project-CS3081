@@ -14,6 +14,14 @@ export const moveCamera = (deltaTime, camera, C, D, moving, speed) => {
     if (moving.right) {
         camera.position.addScaledVector(D, -speed * deltaTime);
     }
+    const DCopy = D.clone();
+    const up = DCopy.cross(C);
+    if (moving.up) {
+        camera.position.addScaledVector(up, -speed * deltaTime);
+    }
+    if (moving.down) {
+        camera.position.addScaledVector(up, speed * deltaTime);
+    }
 };
 
 export const movingKeysDown = (event, moving) => {

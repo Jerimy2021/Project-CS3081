@@ -9,6 +9,7 @@ import { movingKeysDown, movingKeysUp } from '../utils/camaraControls';
 import '../components/ThreeDInterface.css';
 
 const ThreeDInterface = () => {
+    // Refs
     const canvasRef = useRef(null);
     const rendererRef = useRef(null);
     const cameraRef = useRef(null);
@@ -26,8 +27,15 @@ const ThreeDInterface = () => {
     const speed = 0.1;
     let lastTime = useRef(0);
 
+
+    //planetas
+
+    // Pointer lock
     usePointerLock(canvasRef, C, D, moving);
 
+
+
+    // Initialize scene
     useEffect(() => {
         const canvas = canvasRef.current;
         const renderer = new THREE.WebGLRenderer({ canvas });
