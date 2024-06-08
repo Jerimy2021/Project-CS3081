@@ -6,6 +6,8 @@ project/
 *.pyc
 *.pyo
 
+# coverage
+.coverage
 
 # ignorar archivos de caché
 __pycache__/
