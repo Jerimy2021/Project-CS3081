@@ -7,7 +7,9 @@ function SideBar() {
         <div className="sideBar">
             <div id="topSidebar">
                 <h1>Welcoming!</h1>
-                <button id = "welcomeStart">Start</button>
+                <Link to="/UI"> 
+                    <button id = "welcomeStart">Start</button>
+                </Link>
             </div>
             <div id="bottomSidebar">
                <Link to="/Contact"> Contact us </Link>
