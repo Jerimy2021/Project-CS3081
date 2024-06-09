@@ -1,0 +1,17 @@
+# ignorar entornos virtuales
+project/
+
+
+# ignorar archivos de configuración
+*.pyc
+*.pyo
+
+# coverage
+.coverage
+
+# ignorar archivos de caché
+__pycache__/
+*.swp
+.pytest_cache/
+.coverage
+
