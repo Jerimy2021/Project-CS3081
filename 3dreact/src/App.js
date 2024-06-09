@@ -1,7 +1,5 @@
-import logo from './logo.svg';
 import './App.css';
-import ThreeDInterface from './components/ThreeDInterface';
-
+import ThreeDInterface from './components/ThreeDInterface/ThreeDInterface';
 function App() {
   return (
     <div className="body">

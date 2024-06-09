@@ -1,16 +1,15 @@
 import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
-import { initializeScene } from '../utils/sceneSetup';
-import { handleResize } from '../utils/resizeHandler';
-import { usePointerLock } from '../hooks/usePointerLock';
-import { moveCamera, lookRespectToVectors } from '../utils/camaraControls'
-import { movingKeysDown, movingKeysUp } from '../utils/camaraControls';
-import { addStellars } from '../utils/sceneSetup';
+import { initializeScene } from '../../utils/sceneSetup';
+import { handleResize } from '../../utils/resizeHandler';
+import { usePointerLock } from '../../hooks/usePointerLock';
+import { moveCamera, lookRespectToVectors } from '../../utils/camaraControls'
+import { movingKeysDown, movingKeysUp } from '../../utils/camaraControls';
+import { addStellars } from '../../utils/sceneSetup';
 
-import { getStellars } from '../utils/apiFunctions';
+import { getStellars } from '../../utils/apiFunctions';
 
-import '../components/ThreeDInterface.css';
-
+import '../ThreeDInterface/ThreeDInterface.css';
 const ThreeDInterface = () => {
     // Refs
     const canvasRef = useRef(null);
