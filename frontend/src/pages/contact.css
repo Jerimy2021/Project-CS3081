@@ -1,0 +1,118 @@
+a {
+    text-decoration: none;
+    color: var(--primary-color-text);
+  }
+  
+body {
+    color: var(--primary-color-text);
+    background-color: var(--background-color);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    height: 100vh;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.top {
+    display: flex;
+    width: 100%;
+    font-size: 17px;
+    padding: 20px;
+    border-bottom: 2px solid var(--secondary-color);
+    justify-content: space-between;
+    background-color: var(--primary-color-transparent);
+}
+
+.top .iconos {
+    display: flex;
+    gap: 15px;
+}
+
+.top .iconos a {
+    color: var(--primary-color-text);
+}
+
+.top .iconos a:hover {
+    color: var(--primary-color);
+}
+
+.top .iconos a svg {
+    width: 20px;
+    height: 20px;
+}
+
+.top h3 {
+    font-size: 20px;
+}
+
+.center {
+    display: flex;
+    height: 80%;
+    width: 80%;
+    flex-direction: column;
+    padding: 5px;
+    align-items: center;
+    max-width: 800px;
+}
+
+.pregunta h2 {
+color: var(--secondary-color);
+font-size: 25px;
+font-weight: bold;
+}
+
+.contenido {
+display: flex;
+justify-content: space-around;
+height: 100%;
+align-items: center;
+width: 100%;
+}
+
+.bug-reporter {
+background-color: var(--primary-color-transparent);
+padding: 20px;
+border-radius: 10px;
+width: 100%;
+}
+
+.bug-reporter form {
+display: flex;
+flex-direction: column;
+}
+
+.bug-reporter form textarea {
+margin-top: 10px;
+padding: 10px;
+font-size: 16px;
+}
+
+.bug-reporter form button {
+margin-top: 10px;
+padding: 10px;
+background-color: var(--secondary-color);
+border: none;
+border-radius: 5px;
+cursor: pointer;
+}
+
+.bug-reporter form button:hover {
+background-color: #a44ff6;
+transform: translateY(-2px);
+}
+
+.mailto {
+text-align: center;
+margin-top: 20px;
+}
+
+.mailto a {
+font-size: 18px;
+font-weight: bold;
+color: var(--primary-color);
+}
+
+.mailto a:hover {
+color: var(--secondary-color);
+}

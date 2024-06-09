@@ -1,0 +1,47 @@
+.sideBar {
+    background-color: var(--background-color);
+    color: var(--primary-color-text);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 20%;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 10px;
+    border-right: 4px solid var(--secondary-color);
+    align-items: center;
+}
+
+.sideBar *{
+    color: white;
+}
+
+#topSidebar {
+    height: 70%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-bottom: 10%;
+    padding: 5px;
+  }
+  
+#bottomSidebar {
+    height: 30%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; 
+}
+
+#welcomeStart {
+    margin: 20px 0;
+    padding: 10px 20px;
+    background-color: var(--secondary-color);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#welcomeStart:hover {
+    background-color: #a44ff6;
+    transform: translateY(-2px);
+}
