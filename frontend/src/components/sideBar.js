@@ -1,3 +1,5 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
 import './sideBar.css';
 
 function SideBar() {
@@ -8,7 +10,7 @@ function SideBar() {
                 <button id = "welcomeStart">Start</button>
             </div>
             <div id="bottomSidebar">
-                <a href = "#contact">Contact us</a>
+               <Link to="/Contact"> Contact us </Link>
             </div> 
         </div>
     );
