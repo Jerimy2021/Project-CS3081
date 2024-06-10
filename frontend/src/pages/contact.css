@@ -171,8 +171,6 @@ a {
     transition: 0.3s;
 }
 
-
-
 .mailto {
     display: flex;
     flex-direction: column;
@@ -182,3 +180,4 @@ a {
     padding-bottom: 20px;
     align-items: center;
 }
+

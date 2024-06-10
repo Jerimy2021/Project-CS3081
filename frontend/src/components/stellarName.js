@@ -4,7 +4,7 @@ import "./stellarName.css";
 function StellarName(props) {
     return (
         <div className="mainStellarName">
-            <p id="stellarName">Sollar system</p>
+            <p id="stellarName">{props.name}</p>
         </div>
     );
 }

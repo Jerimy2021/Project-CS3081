@@ -36,3 +36,63 @@
     transform: rotate(360deg);
   }
 }
+
+
+/* Estilos para la animación de entrada y salida 
+.page-enter {
+  position: absolute;
+  width: 100%;
+  transform: translateX(-100%);
+  transition: transform 300ms ease-in-out;
+}
+
+.page-enter-active {
+  transform: translateX(0%);
+}
+
+.page-exit {
+  position: absolute;
+  width: 100%;
+  transform: translateX(0%);
+  transition: transform 300ms ease-in-out;
+}
+
+.page-exit-active {
+  transform: translateX(100%);
+}
+
+ Estilos para la animación de entrada y salida */
+
+.page-enter .jalar-a-izquierda {
+  position: absolute;
+  width: 100%;
+  transform: translateX(100%);
+  transition: transform 300ms ease-in-out;
+}
+
+.page-enter .jalar-a-derecha {
+  position: absolute;
+  width: 100%;
+  transform: translateX(-100%);
+  transition: transform 300ms ease-in-out;
+}
+
+.page-enter-active {
+  transform: translateX(0%);
+}
+
+
+.page-exit {
+  position: absolute;
+  width: 100%;
+  transform: translateX(0%);
+  transition: transform 300ms ease-in-out;
+}
+
+.page-exit-active .jalar-a-izquierda{
+  transform: translateX(-100%);
+}
+
+.page-exit-active .jalar-a-derecha{
+  transform: translateX(100%);
+}

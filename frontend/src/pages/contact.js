@@ -3,7 +3,7 @@ import './contact.css';
 
 function Contact() {
   return (
-    <div className="contact">
+    <div className="contact jalar-a-derecha">
       <div className="top">
           <h3>Seccion de contacto</h3>
           <div className="iconos">

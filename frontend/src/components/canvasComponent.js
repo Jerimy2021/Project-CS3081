@@ -3,7 +3,7 @@ import React from "react";
 function CanvasComponent(props) {
   return (
     <div>
-        <canvas class = "StellarSystem"></canvas>
+        <canvas className = "StellarSystem"></canvas>
     </div>
   );
 }
