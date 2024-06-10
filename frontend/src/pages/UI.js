@@ -47,13 +47,72 @@ function UI() {
         const ctx = topCanvasRef.current.getContext('2d');
 
         ctx.fillStyle = 'white';
-        ctx.strokeStyle = 'white';  
+        ctx.strokeStyle = 'white';
+        
+        const radioPixeles = (d, i) => {
+            console.log(planetsRef.current[i]);
+            const radioUnits = planetsRef.current[i].geometry.parameters.radius;
+            
+            const height = topCanvasRef.current.clientHeight;
+            return radioUnits*(height/(d*Math.tan(1.309/2))); //Math.tan() recieb el angulo en radianes
+        }
 
+        const centroCoordenadas = (i) => {
+            //proyeccion del planeta en el canvas
+            let vectorCP = new THREE.Vector3();
+            vectorCP = vectorCP.subVectors(planetsRef.current[i].position, cameraRef.current.position);
+            vectorCP.setFromMatrixPosition(planetsRef.current[i].matrixWorld);
+
+            const coordendas = {x: 0, y: 0};
+
+            coordendas.x = (vectorCP.x + 1) / 2 * topCanvasRef.current.clientWidth;
+            coordendas.y = (1 - vectorCP.y) / 2 * topCanvasRef.current.clientHeight;
+
+            return coordendas;
+        }
+
+        const drawDashedCircle = (x, y, r, ctx) => {
+            ctx.beginPath();
+            ctx.setLineDash([5, 15]);
+            ctx.arc(x, y, r, 0, 2 * Math.PI);
+            ctx.strokeStyle = 'white';
+            ctx.stroke();
+        }
 
         const render = () => {
             if (!topCanvasRef.current) return;
             ctx.clearRect(0, 0, topCanvasRef.current.clientWidth, topCanvasRef.current.clientHeight);
+            //trabaja aqui, circulitos
 
+            for(let i = 0; i < planetsRef.current.length; i++) {
+                //vector desde la camara al planeta
+                let vectorCP = new THREE.Vector3();
+                vectorCP = vectorCP.subVectors(planetsRef.current[i].position, cameraRef.current.position);
+                vectorCP.setFromMatrixPosition(planetsRef.current[i].matrixWorld);
+
+
+                //angulo entre vector CP y C
+                const angle = vectorCP.angleTo(C.current); //el angulo está en radianes
+
+                if(angle < 1.309/2){ //75/2
+                    //distancia entre la camara y el planeta
+                    //modulo de vectorCP
+                    const distance = vectorCP.length();
+                    console.log("d, i: ", distance, i);
+                    const radio = radioPixeles(distance, i);
+
+                    //coordenadas del centro del planeta
+                    const coordendas = centroCoordenadas(i);
+
+                    //dibujar circulo
+                    ctx.beginPath();
+                    ctx.setLineDash([5, 15]);
+                    ctx.arc(window.width/2, window.height/2, 50, 0, 2 * Math.PI);
+                    ctx.strokeStyle = 'white';
+                    ctx.stroke();
+
+                }
+            }
             requestAnimationFrame(render);
         }
 
