@@ -6,7 +6,7 @@ def create_app():
     app = Flask(__name__)
 
     # Configuración de CORS para permitir acceso a la API desde cualquier origen
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    CORS(app, origins=['*'])
     
     # Registrar el blueprint para las rutas de la API
     app.register_blueprint(api_bp)
