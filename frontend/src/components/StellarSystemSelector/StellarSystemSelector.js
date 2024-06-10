@@ -65,6 +65,7 @@ function StellarSystemSelector({stellarSystem, conatinerRef}) {
             camera.position.z = 5;
 
             const animate = () => {
+                if (!conatinerRef.current) return;
                 renderer.render(scene, camera);
                 //orbitar la camara alrededor de la esfera
                 camera.position.x = 5 * Math.sin(Date.now() * 0.0001);
@@ -82,6 +83,7 @@ function StellarSystemSelector({stellarSystem, conatinerRef}) {
 
             //eventos de resize
             window.addEventListener('resize', () => {
+                if (!conatinerRef.current) return;
                 camera.aspect = conatinerRef.current.clientWidth / conatinerRef.current.clientHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(conatinerRef.current.clientWidth, conatinerRef.current.clientHeight);

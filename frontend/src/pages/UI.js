@@ -1,6 +1,7 @@
 import React from "react";
 import StellarName from "../components/stellarName";
 import ThreeDInterface from "../components/ThreeDInterface/ThreeDInterface";
+import LoadWindow from "../components/LoadWindow/LoadWindow";
 import "./UI.css";
 
 import { useState, useEffect, useRef } from "react";
@@ -24,8 +25,6 @@ function loadData(setStellarSystems, setSelectedStellarSystem, setPlanets) {
 
 
 function UI() {
-
-    //selectores
     const [stellar_systems, setStellarSystems] = useState([]);
     const [selected_stellar_system, setSelectedStellarSystem] = useState(0);
     const [planets, setPlanets] = useState([]);
@@ -38,8 +37,7 @@ function UI() {
 
     const topCanvasRef = useRef({ current: { width: 0, height: 0, clientWidth: 0, clientHeight: 0 } });
     
-    
-    
+    const selectedPlanetsRef = useRef([]);    
 
 
     // Load planets
@@ -48,9 +46,23 @@ function UI() {
         
         const ctx = topCanvasRef.current.getContext('2d');
 
+        const distanciaParaRadioEspecifico = (desiredRadius, radioUnits) => {
+            // Asegurarse de que los elementos estén disponibles
+            if (!topCanvasRef.current) return null;
+
+            const height = topCanvasRef.current.clientHeight;
+        
+            // Ángulo de visión vertical de la cámara (en radianes)
+            const fov = 1.309; // Ejemplo: 75 grados en radianes, ajusta según tu configuración
+        
+            // Calcular la distancia necesaria
+            const distance = (radioUnits * height) / (desiredRadius * Math.tan(fov / 2));
+        
+            return distance;
+        }
+        
         
         const radioPixeles = (d, i) => {
-            console.log(planetsRef.current[i]);
             const radioUnits = planetsRef.current[i].geometry.parameters.radius;
             
             const height = topCanvasRef.current.clientHeight;
@@ -79,16 +91,33 @@ function UI() {
             ctx.stroke();
         }
 
+
+        //si presionas la F la camara se enfoca en el planeta
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'f') {
+                if (selectedPlanetsRef.current.length > 0) {
+                    const planet = planetsRef.current[selectedPlanetsRef.current[0]];
+                    const radio = planet.geometry.parameters.radius;
+                    const targetRadius = 150;
+                    cameraRef.current.position.set(planet.position.x - distanciaParaRadioEspecifico(targetRadius, radio), planet.position.y, planet.position.z);
+                    C.current = new THREE.Vector3(1, 0, 0);
+                    D.current = new THREE.Vector3(0, 0, -1);
+                }
+            }
+        });
+
         const render = () => {
+            if (!topCanvasRef.current) return;
+
             topCanvasRef.current.width = window.innerWidth;
             topCanvasRef.current.height = window.innerHeight;
+
+            selectedPlanetsRef.current = [];
 
             for(let i = 0; i < planetsRef.current.length; i++) {
                 //vector desde la camara al planeta
                 let vectorCP = new THREE.Vector3();
                 vectorCP = vectorCP.subVectors(planetsRef.current[i].position, cameraRef.current.position);
-                vectorCP.setFromMatrixPosition(planetsRef.current[i].matrixWorld);
-
 
                 //angulo entre vector CP y C
                 const angle = vectorCP.angleTo(C.current); //el angulo está en radianes
@@ -97,7 +126,6 @@ function UI() {
                     //distancia entre la camara y el planeta
                     //modulo de vectorCP
                     const distance = vectorCP.length();
-                    console.log("d, i: ", distance, i);
                     const radio = radioPixeles(distance, i);
 
                     //coordenadas del centro del planeta
@@ -106,6 +134,10 @@ function UI() {
                     //dibujar circulo
                     drawDashedCircle(coordendas.x, coordendas.y, radio);
 
+                    const dist_center_coord = Math.sqrt(Math.pow(coordendas.x - topCanvasRef.current.width/2, 2) + Math.pow(coordendas.y - topCanvasRef.current.height/2, 2));
+                    if (dist_center_coord <= radio) {
+                        selectedPlanetsRef.current.push(i);
+                    }
                 }
             }
 
@@ -131,6 +163,7 @@ function UI() {
 
     return (
         <div className="UI jalar-a-derecha">
+            <LoadWindow loaded={planetsRef.current.length > 0} />
             <canvas className="topCanvas" ref={topCanvasRef} />
             <ThreeDInterface planets={planets} cameraRef={cameraRef} sceneRef={sceneRef} C={C} D={D} topCanvasRef={topCanvasRef} planetsRef={planetsRef} />
             <div className="controles">

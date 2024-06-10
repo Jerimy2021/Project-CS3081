@@ -45,7 +45,7 @@ export const addStellars = (scene, stellars, planetsRef) => {
 
 
 
-export const startScene = (canvasRef, rendererRef, cameraRef, sceneRef, C, D, moving, speed, planets) => {
+export const startScene = (canvasRef, rendererRef, cameraRef, sceneRef, C, D, moving, speed, planets, planetsRef) => {
     // Start the scene
     const canvas = canvasRef.current;
     const renderer = new THREE.WebGLRenderer({ canvas });
@@ -55,7 +55,7 @@ export const startScene = (canvasRef, rendererRef, cameraRef, sceneRef, C, D, mo
     sceneRef.current = scene;
 
     // Camera
-    const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 10000);
+    const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.01, 10000);
     cameraRef.current = camera;
 
     // Load stellars
@@ -76,9 +76,16 @@ export const startScene = (canvasRef, rendererRef, cameraRef, sceneRef, C, D, mo
 
     // Render
     const render = (time) => {
+        if (!canvasRef.current) return;
         lookRespectToVectors(C.current, D.current, camera);
         moveCamera(1, camera, C.current, D.current, moving.current, speed);
         renderer.render(scene, camera);
+
+        //rotar los planetas
+        for (let i = 0; i < planetsRef.current.length; i++) {
+            planetsRef.current[i].rotation.y += 0.001;
+        }
+
 
         requestAnimationFrame(render);
     };
