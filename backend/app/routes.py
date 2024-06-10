@@ -59,11 +59,20 @@ def get_planets(stellar_system):
                 'sy_dist': planet[9], #Distance to the planetary system in units of parsecs
                 'radius_jupiter': planet[10],
                 'radius_earth': planet[11],
-                'position': calculate_position({
+                'coordinates': calculate_position({
                     'orbsmax': float(planet[4]) if planet[4] else 0, #Semi-eje mayor en AU
                     'orbeccen: ': float(planet[5]) if planet[5] else 0, #Excentricidad
                     'orbincl': float(planet[6]) if planet[6] else 0 #Inclinación en grados convertido a radianes
-                }, radians(0)) #theta = 0
+                }, radians(0)), #theta = 0
+                'textures': {
+                    'diffuse': "http://127.0.0.1:5000/static/planet_textures/planet.png",
+                    'normal': "",
+                    'specular': "",
+                    'emissive': "",
+                    'opacity': "",
+                    'ambient': ""
+                },
+                'radius': planet[11]
             }
             for planet in planets
         ]
@@ -84,7 +93,7 @@ def get_planets(stellar_system):
 @api_bp.route('/stellar_systems', methods=['GET'])
 def stellar_systems():
     try:
-        api_url = 'https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+distinct(sy_name),sy_pnum,st_rad,st_vsin+from+stellarhosts+order+by+sy_pnum+desc&format=csv'
+        api_url = 'https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+distinct(sy_name),sy_pnum+from+stellarhosts+order+by+sy_pnum+desc&format=csv'
         headers = {
             'User-Agent': 'App'
         }
@@ -107,9 +116,7 @@ def stellar_systems():
         stellar_systems = [
             {
                 'name': stellar_system[0],
-                'num_planets': int(stellar_system[1]),
-                'radius': stellar_system[2],
-                'velocity': stellar_system[3]
+                'num_planets': int(stellar_system[1])
             }
             for stellar_system in stellar_systems
         ]

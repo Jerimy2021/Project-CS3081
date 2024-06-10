@@ -1,5 +1,8 @@
 import * as THREE from 'three';
 
+import { lookRespectToVectors, movingKeysDown, movingKeysUp, moveCamera } from './camaraControls';
+import { handleResize } from './resizeHandler';
+
 import { getStellarSphere } from './stellarsFunctions';
 
 export const initializeScene = (scene) => {
@@ -33,8 +36,55 @@ export const initializeScene = (scene) => {
 
 
 export const addStellars = (scene, stellars) => {
-    stellars.current.forEach((stellar) => {
+    stellars.forEach((stellar) => {
         const sphere = getStellarSphere(stellar);
         scene.add(sphere);
     });
+}
+
+
+
+export const startScene = (canvasRef, rendererRef, cameraRef, sceneRef, C, D, moving, speed, planets) => {
+    // Start the scene
+    const canvas = canvasRef.current;
+    const renderer = new THREE.WebGLRenderer({ canvas });
+    rendererRef.current = renderer;
+
+    const scene = new THREE.Scene();
+    sceneRef.current = scene;
+
+    // Camera
+    const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 10000);
+    cameraRef.current = camera;
+
+    // Load stellars
+    addStellars(scene, planets);
+
+
+    // Initialize scene
+    initializeScene(scene);
+
+    // Resize
+    const onResize = () => handleResize(renderer, camera, canvas);
+    window.addEventListener('resize', onResize);
+    onResize();
+
+    // Camera movement
+    window.addEventListener('keydown', (event) => { movingKeysDown(event, moving.current); });
+    window.addEventListener('keyup', (event) => { movingKeysUp(event, moving.current); });
+
+    // Render
+    const render = (time) => {
+        lookRespectToVectors(C.current, D.current, camera);
+        moveCamera(1, camera, C.current, D.current, moving.current, speed);
+        renderer.render(scene, camera);
+
+        requestAnimationFrame(render);
+    };
+
+    render();
+
+    return () => {
+        window.removeEventListener('resize', onResize);
+    };
 }

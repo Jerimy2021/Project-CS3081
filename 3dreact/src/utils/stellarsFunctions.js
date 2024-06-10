@@ -3,13 +3,14 @@ import * as THREE from 'three';
 export const getStellarSphere = (stellar) => {
     let radius = stellar.radius; // Radius of the sphere
     //convertir radio a float
-    radius = parseFloat(radius.replace(/,/g, ''));
+    radius = parseFloat(radius)*1000;
+    console.log(radius);
     const geometry = new THREE.SphereGeometry(radius/100, 128, 128);
     const texture = new THREE.TextureLoader().load(stellar.textures.diffuse);
     const material = new THREE.MeshStandardMaterial({ 
         map: texture,
         displacementMap: texture,
-        displacementScale: radius / 3000, // Ajusta la escala del desplazamiento según la necesidad
+        displacementScale: radius / 1500, // Ajusta la escala del desplazamiento según la necesidad
         metalness: 0.3,
         roughness: 0.8,
     });
