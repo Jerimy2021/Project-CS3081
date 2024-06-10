@@ -45,7 +45,7 @@ function UI() {
         loadData(setStellarSystems, setSelectedStellarSystem, setPlanets);
         
         const ctx = topCanvasRef.current.getContext('2d');
-
+        
         const distanciaParaRadioEspecifico = (desiredRadius, radioUnits) => {
             // Asegurarse de que los elementos estén disponibles
             if (!topCanvasRef.current) return null;
@@ -61,12 +61,23 @@ function UI() {
             return distance;
         }
         
-        
-        const radioPixeles = (d, i) => {
+        const radioPixeles = (d, i, coordenadas) => {
+            console.log(planetsRef.current[i]);
             const radioUnits = planetsRef.current[i].geometry.parameters.radius;
             
             const height = topCanvasRef.current.clientHeight;
-            return radioUnits*(height/(d*Math.tan(1.309/2))); //Math.tan() recieb el angulo en radianes
+            const radioReal = radioUnits*(height/(d*Math.tan(1.309/1.38))); //Math.tan() recieb el angulo en radianes //1.38
+            //maximo
+            const minRadio = Math.max(50, radioReal);
+            const b = 20;
+
+            const R = Math.pow(0.2, -1/b);
+
+            //distancia entre el centro del planeta y el centro de la pantalla
+            const distanciaCentro = Math.sqrt(Math.pow(coordenadas.x - topCanvasRef.current.clientWidth/2, 2) + Math.pow(coordenadas.y - topCanvasRef.current.clientHeight/2, 2));
+
+            const radioPixeles = (0.6*minRadio/(1+Math.pow(R, distanciaCentro-b)) + minRadio);
+            return radioPixeles;
         }
 
         const centroCoordenadas = (i) => {
@@ -124,12 +135,15 @@ function UI() {
 
                 if(angle < Math.PI/2) {
                     //distancia entre la camara y el planeta
-                    //modulo de vectorCP
-                    const distance = vectorCP.length();
-                    const radio = radioPixeles(distance, i);
+                    const distance = cameraRef.current.position.distanceTo(planetsRef.current[i].position);
 
                     //coordenadas del centro del planeta
                     const coordendas = centroCoordenadas(i);
+
+                    //radio del circulo
+                    const radio = radioPixeles(distance, i, coordendas);
+
+                    
 
                     //dibujar circulo
                     drawDashedCircle(coordendas.x, coordendas.y, radio);
