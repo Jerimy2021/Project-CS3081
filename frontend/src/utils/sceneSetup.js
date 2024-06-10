@@ -35,9 +35,10 @@ export const initializeScene = (scene) => {
 };
 
 
-export const addStellars = (scene, stellars) => {
+export const addStellars = (scene, stellars, planetsRef) => {
     stellars.forEach((stellar) => {
         const sphere = getStellarSphere(stellar);
+        planetsRef.current.push(sphere);
         scene.add(sphere);
     });
 }

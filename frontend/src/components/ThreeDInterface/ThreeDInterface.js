@@ -8,7 +8,7 @@ import { addStellars } from '../../utils/sceneSetup';
 
 import '../ThreeDInterface/ThreeDInterface.css';
 
-const ThreeDInterface = ({ planets, cameraRef, sceneRef, C, D, topCanvasRef }) => {
+const ThreeDInterface = ({ planets, cameraRef, sceneRef, C, D, topCanvasRef, planetsRef }) => {
     // Refs
     const canvasRef = useRef(null);
     const rendererRef = useRef(null);
@@ -29,15 +29,14 @@ const ThreeDInterface = ({ planets, cameraRef, sceneRef, C, D, topCanvasRef }) =
     // Initialize scene
     useEffect(() => {
         startScene(canvasRef, rendererRef, cameraRef, sceneRef, C, D, moving, speed, planets);
-    
-    //eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
         if (sceneRef.current) { //null
             sceneRef.current.children = []; //vaciar la escena
+            planetsRef.current = []; //vaciar los planetas
             initializeScene(sceneRef.current); //inicializar la escena de nuevo
-            addStellars(sceneRef.current, planets); //añadir los planetas
+            addStellars(sceneRef.current, planets, planetsRef); //añadir los planetas
         }
     //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [planets]);

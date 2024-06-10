@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, abort
 from .utils import fetch_textures_planets, fetch_planets_error, calculate_position
+from .utils import solar_system
 
 api_bp = Blueprint('api', __name__)
 
@@ -22,6 +23,12 @@ def get_planets(stellar_system):
                 'success': False,
                 'errors': ["Error 400: No stellar_system provided"]
             }), 400
+        elif stellar_system.lower() == 'sun':
+            return jsonify({
+                'success': True,
+                'errors': [],
+                'data': solar_system,
+            }), 200
         
         encoded_stellar_system = urllib.parse.quote_plus(stellar_system)
 

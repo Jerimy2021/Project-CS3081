@@ -25,7 +25,14 @@ export const getStellarSystems = (setStellarSystems) => {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+                const solar_system = {
+                    name: "Sun",
+                    num_planets: 8, //(mercury, venus, earth, mars, jupiter, saturn, uranus, neptune)
+                }
+                //insertar primer elemento
+                data.data.stellar_systems.unshift(solar_system);
                 setStellarSystems(data.data.stellar_systems);
+                
                 //guardar en local storage
                 localStorage.setItem('stellarSystems', JSON.stringify(data.data.stellar_systems));
             } else {
