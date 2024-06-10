@@ -1,10 +1,10 @@
 import React from "react";
 import "./stellarName.css";
 
-function StellarName(props) {
+function StellarName({ name }) {
     return (
         <div className="mainStellarName">
-            <p id="stellarName">{props.name}</p>
+            <p id="stellarName">{ name }</p>
         </div>
     );
 }

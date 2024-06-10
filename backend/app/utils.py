@@ -5,6 +5,7 @@ import re
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from math import cos, sin, radians
+import random
 
 import numpy as np
 
@@ -19,29 +20,13 @@ def calculate_position(orbital_parameters, theta):
     Returns:
     tuple: Coordenadas x, y, z.
     """
-
-    # Extraer los parámetros orbitales del diccionario
-    a = float(orbital_parameters.get('orbsmax', 0))  # Semi-eje mayor en AU
-    e = float(orbital_parameters.get('orbeccen', 0))  # Excentricidad
-    i = np.radians(float(orbital_parameters.get('orbincl', 0)))  # Inclinación en grados convertido a radianes
-
-    # Calcular la distancia radial usando la ecuación de la órbita elíptica
-    r = (a * (1 - e**2)) / (1 + e * np.cos(theta))
-
-    # Coordenadas en el plano orbital
-    x_prime = r * np.cos(theta)
-    y_prime = r * np.sin(theta)
-    z_prime = 0
-
-    # Rotación para incluir la inclinación
-    x = x_prime
-    y = y_prime * np.cos(i)
-    z = y_prime * np.sin(i)
-
+    #actualizar seed del random con orbital
+    random.seed(orbital_parameters['orbsmax'])
+    
     return {
-        'x': x,
-        'y': y,
-        'z': z
+        'x': random.randint(-1000, 1000),
+        'y': random.randint(-1000, 1000),
+        'z': random.randint(-1000, 1000)
     }
 
 

@@ -43,6 +43,8 @@ export const movingKeysDown = (event, moving) => {
         case ' ':
             moving.up = true;
             break;
+        default:
+            break;
     }
 }
 
@@ -65,6 +67,8 @@ export const movingKeysUp = (event, moving) => {
             break;
         case ' ':
             moving.up = false;
+            break;
+        default:
             break;
     }
 }

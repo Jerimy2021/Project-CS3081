@@ -11,6 +11,8 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from math import cos, sin, radians
 
+quant_textures = 10
+
 
 @api_bp.route('/stellar_systems/<stellar_system>/planets', methods=['GET'])
 def get_planets(stellar_system):
@@ -45,6 +47,8 @@ def get_planets(stellar_system):
             }), 404
 
         planets = response_data[1:]
+        def sumchars(s):
+            return sum(ord(c) for c in s)
         planets = [
             {
                 'name': planet[0],
@@ -60,12 +64,12 @@ def get_planets(stellar_system):
                 'radius_jupiter': planet[10],
                 'radius_earth': planet[11],
                 'coordinates': calculate_position({
-                    'orbsmax': float(planet[4]) if planet[4] else 0, #Semi-eje mayor en AU
-                    'orbeccen: ': float(planet[5]) if planet[5] else 0, #Excentricidad
-                    'orbincl': float(planet[6]) if planet[6] else 0 #Inclinación en grados convertido a radianes
+                    'orbsmax': float(planet[4]) if planet[4] else 0, #Semi-eje mayor en AU (AU es la unidad de distancia entre la Tierra y el Sol)
+                    'orbeccen: ': float(planet[5]) if planet[5] else 0, #Excentricidad (es un número entre 0 y 1, si es 0 es una órbita circular y si es 1 es una órbita parabólica)
+                    'orbincl': float(planet[6]) if planet[6] else 0 #Inclinación en grados convertido a radianes (es el ángulo entre el plano de la órbita y el plano del ecuador de la estrella)
                 }, radians(0)), #theta = 0
                 'textures': {
-                    'diffuse': "http://127.0.0.1:5000/static/planet_textures/planet.png",
+                    'diffuse': "/static/planet_textures/planet" + str(sumchars(planet[0]) % quant_textures+1) + ".png",
                     'normal': "",
                     'specular': "",
                     'emissive': "",

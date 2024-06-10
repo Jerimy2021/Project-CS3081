@@ -10,27 +10,13 @@ import * as THREE from "three";
 
 function UI() {
     const StellarNameProps = {
-        name: "My solar system"
+        name: "Name"
     };
 
     //selectores
     const [stellar_systems, setStellarSystems] = useState([]);
-    const [selected_stellar_system, setSelectedStellarSystem] = useState('');
-    const [planets, setPlanets] = useState([
-        {
-            name: "Earth",
-            radius: "6.371",
-            textures: {
-                diffuse: "https://raw.githubusercontent.com/gist/juanmirod/081a0b45372f6da81469/raw/526488c67e82f8916f21c07c0b7707b6d5a3615c/earth_texture_map_1000px.jpg",
-                normal: "",
-                specular: "",
-                emissive: "",
-                opacity: "",
-                ambient: ""
-            },
-            coordinates: { x: 500, y: 0, z: 0 }
-        },
-    ]);
+    const [selected_stellar_system, setSelectedStellarSystem] = useState(0);
+    const [planets, setPlanets] = useState([]);
 
     const cameraRef = useRef(null);
     const sceneRef = useRef(null);
@@ -42,14 +28,34 @@ function UI() {
 
     // Load planets
     useEffect(() => {
-        getStellarSystems(setStellarSystems);
+        const stellar_systems_local = JSON.parse(localStorage.getItem('stellarSystems'));
+
+        if (stellar_systems_local) {
+            setStellarSystems(stellar_systems_local);
+            const index = parseInt(localStorage.getItem('selectedStellarSystem'));
+            setSelectedStellarSystem(parseInt(index));
+
+
+            getPlanets(setPlanets, stellar_systems_local[index].name);
+        } else {
+            getStellarSystems(setStellarSystems);
+        }
+
+        console.log(stellar_systems);
+
+
+    //eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
+        if (!stellar_systems) return; // Wait for stellar systems to load
+
         if (stellar_systems.length > 0) {
-        getPlanets(setPlanets, stellar_systems[0].name);
+            getPlanets(stellar_systems[selected_stellar_system].name, setPlanets);
         }
-    }, [selected_stellar_system]); 
+        
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selected_stellar_system]);
 
     return (
         <div className="UI jalar-a-derecha">

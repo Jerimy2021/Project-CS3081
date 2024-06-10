@@ -1,12 +1,12 @@
 import * as THREE from 'three';
+import { serverURL } from '../config/config';
 
 export const getStellarSphere = (stellar) => {
     let radius = stellar.radius; // Radius of the sphere
     //convertir radio a float
     radius = parseFloat(radius)*1000;
-    console.log(radius);
     const geometry = new THREE.SphereGeometry(radius/100, 128, 128);
-    const texture = new THREE.TextureLoader().load(stellar.textures.diffuse);
+    const texture = new THREE.TextureLoader().load(serverURL + stellar.textures.diffuse);
     const material = new THREE.MeshStandardMaterial({ 
         map: texture,
         displacementMap: texture,

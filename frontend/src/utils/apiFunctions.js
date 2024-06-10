@@ -26,6 +26,8 @@ export const getStellarSystems = (setStellarSystems) => {
         .then(data => {
             if (data.success) {
                 setStellarSystems(data.data.stellar_systems);
+                //guardar en local storage
+                localStorage.setItem('stellarSystems', JSON.stringify(data.data.stellar_systems));
             } else {
                 console.log(data.message);
             }
