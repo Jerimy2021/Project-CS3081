@@ -1,7 +1,6 @@
 import React from 'react';
 import SideBar from '../components/sideBar';
 import Slider from '../components/slider';
-import CanvasComponent from '../components/canvasComponent';
 import StellarName from '../components/stellarName';
 import './welcomeTab.css';
 
@@ -14,7 +13,9 @@ function WelcomeTab() {
     <div className="WelcomeTab">
       <SideBar />
       <div className="main">
-        <CanvasComponent />
+        <div className="canvas">
+          <canvas />
+        </div>
         <Slider />
         <StellarName {...StellarNameProps} />
       </div>

@@ -8,7 +8,7 @@ import { addStellars } from '../../utils/sceneSetup';
 
 import '../ThreeDInterface/ThreeDInterface.css';
 
-const ThreeDInterface = ({ planets, cameraRef, sceneRef, C, D }) => {
+const ThreeDInterface = ({ planets, cameraRef, sceneRef, C, D, topCanvasRef }) => {
     // Refs
     const canvasRef = useRef(null);
     const rendererRef = useRef(null);
@@ -24,7 +24,7 @@ const ThreeDInterface = ({ planets, cameraRef, sceneRef, C, D }) => {
 
 
     // Pointer lock
-    usePointerLock(canvasRef, C, D, moving);
+    usePointerLock(topCanvasRef, C, D, moving);
 
     // Initialize scene
     useEffect(() => {

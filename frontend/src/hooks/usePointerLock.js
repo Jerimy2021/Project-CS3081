@@ -48,39 +48,6 @@ export const usePointerLock = (canvasRef, C, D, moving) => {
         canvas.addEventListener('click', onClick);
         document.addEventListener('pointerlockchange', onPointerLockChange, false);
 
-        window.addEventListener('keydown', (event) => {
-            switch (event.key) {
-                case 'w':
-                    moving.current.forward = true;
-                    break;
-                case 's':
-                    moving.current.backward = true;
-                    break;
-                case 'a':
-                    moving.current.left = true;
-                    break;
-                case 'd':
-                    moving.current.right = true;
-                    break;
-            }
-        });
-
-        window.addEventListener('keyup', (event) => {
-            switch (event.key) {
-                case 'w':
-                    moving.current.forward = false;
-                    break;
-                case 's':
-                    moving.current.backward = false;
-                    break;
-                case 'a':
-                    moving.current.left = false;
-                    break;
-                case 'd':
-                    moving.current.right = false;
-                    break;
-            }
-        });
 
         return () => {
             canvas.removeEventListener('click', onClick);
