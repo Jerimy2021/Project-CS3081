@@ -35,7 +35,7 @@ function StellarSystemSelector({stellarSystem, conatinerRef}) {
 
             stellarSystemTexture = sum % 10 + 1;
 
-            const textureURL = serverURL + "/static/planet_textures/planet" + stellarSystemTexture + ".png";
+            const textureURL = serverURL + "/static/planet_textures/planet_bk" + stellarSystemTexture + ".png";
             //random
             const texture = new THREE.TextureLoader().load(textureURL);
             const material = new THREE.MeshStandardMaterial({

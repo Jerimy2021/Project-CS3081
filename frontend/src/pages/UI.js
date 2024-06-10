@@ -6,8 +6,6 @@ import "./UI.css";
 import { useState, useEffect, useRef } from "react";
 import { getStellarSystems, getPlanets } from "../utils/apiFunctions";
 import * as THREE from "three";
-import { randFloat } from "three/src/math/MathUtils.js";
-
 
 function loadData(setStellarSystems, setSelectedStellarSystem, setPlanets) {
     const stellar_systems_local = JSON.parse(localStorage.getItem('stellarSystems'));
@@ -39,7 +37,7 @@ function UI() {
     const D = useRef(new THREE.Vector3(0, 0, -1)); // Camera right direction
     const planetsRef = useRef([]);
 
-    const topCanvasRef = useRef(null);
+    const topCanvasRef = useRef({ current: { width: 0, height: 0, clientWidth: 0, clientHeight: 0 } });
     
 
     // Load planets
@@ -50,16 +48,12 @@ function UI() {
 
         ctx.fillStyle = 'white';
         ctx.strokeStyle = 'white';  
-        
-        const drawCircle = (x, y, r) => {
-            ctx.beginPath();
-            ctx.arc(x, y, r, 0, 2 * Math.PI);
-            ctx.stroke();
-        }
+
 
         const render = () => {
-            ctx.clearRect(0, 0, topCanvasRef.current.width, topCanvasRef.current.height);
-            
+            if (!topCanvasRef.current) return;
+            ctx.clearRect(0, 0, topCanvasRef.current.clientWidth, topCanvasRef.current.clientHeight);
+
             requestAnimationFrame(render);
         }
 

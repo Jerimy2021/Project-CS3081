@@ -76,7 +76,7 @@ def get_planets(stellar_system):
                     'orbincl': float(planet[6]) if planet[6] else 0 #Inclinación en grados convertido a radianes (es el ángulo entre el plano de la órbita y el plano del ecuador de la estrella)
                 }, radians(0)), #theta = 0
                 'textures': {
-                    'diffuse': "/static/planet_textures/planet" + str(sumchars(planet[0]) % quant_textures+1) + ".png",
+                    'diffuse': "/static/planet_textures/planet_bk" + str(sumchars(planet[0]) % quant_textures+1) + ".png",
                     'normal': "",
                     'specular': "",
                     'emissive': "",

@@ -29,6 +29,8 @@ const ThreeDInterface = ({ planets, cameraRef, sceneRef, C, D, topCanvasRef, pla
     // Initialize scene
     useEffect(() => {
         startScene(canvasRef, rendererRef, cameraRef, sceneRef, C, D, moving, speed, planets);
+    
+    //eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
