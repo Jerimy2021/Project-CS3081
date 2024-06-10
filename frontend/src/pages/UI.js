@@ -45,7 +45,7 @@ function UI() {
         loadData(setStellarSystems, setSelectedStellarSystem, setPlanets);
         
         const ctx = topCanvasRef.current.getContext('2d');
-        
+
         const distanciaParaRadioEspecifico = (desiredRadius, radioUnits) => {
             // Asegurarse de que los elementos estén disponibles
             if (!topCanvasRef.current) return null;
@@ -66,7 +66,7 @@ function UI() {
             const radioUnits = planetsRef.current[i].geometry.parameters.radius;
             
             const height = topCanvasRef.current.clientHeight;
-            const radioReal = radioUnits*(height/(d*Math.tan(1.309/1.38))); //Math.tan() recieb el angulo en radianes //1.38
+            const radioReal = radioUnits*(height/(d*Math.tan(1.309/2))); //Math.tan() recieb el angulo en radianes //1.38
             //maximo
             const minRadio = Math.max(50, radioReal);
             const b = 20;
