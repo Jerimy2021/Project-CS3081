@@ -23,7 +23,6 @@ function loadData(setStellarSystems, setSelectedStellarSystem, setPlanets) {
 }
 
 
-
 function UI() {
 
     //selectores
@@ -39,6 +38,9 @@ function UI() {
 
     const topCanvasRef = useRef({ current: { width: 0, height: 0, clientWidth: 0, clientHeight: 0 } });
     
+    
+    
+
 
     // Load planets
     useEffect(() => {
@@ -46,8 +48,6 @@ function UI() {
         
         const ctx = topCanvasRef.current.getContext('2d');
 
-        ctx.fillStyle = 'white';
-        ctx.strokeStyle = 'white';
         
         const radioPixeles = (d, i) => {
             console.log(planetsRef.current[i]);
@@ -61,7 +61,7 @@ function UI() {
             //proyeccion del planeta en el canvas
             let vectorCP = new THREE.Vector3();
             vectorCP = vectorCP.subVectors(planetsRef.current[i].position, cameraRef.current.position);
-            vectorCP.setFromMatrixPosition(planetsRef.current[i].matrixWorld);
+            vectorCP.setFromMatrixPosition(planetsRef.current[i].matrixWorld).project(cameraRef.current);
 
             const coordendas = {x: 0, y: 0};
 
@@ -71,7 +71,7 @@ function UI() {
             return coordendas;
         }
 
-        const drawDashedCircle = (x, y, r, ctx) => {
+        const drawDashedCircle = (x, y, r) => {
             ctx.beginPath();
             ctx.setLineDash([5, 15]);
             ctx.arc(x, y, r, 0, 2 * Math.PI);
@@ -80,9 +80,8 @@ function UI() {
         }
 
         const render = () => {
-            if (!topCanvasRef.current) return;
-            ctx.clearRect(0, 0, topCanvasRef.current.clientWidth, topCanvasRef.current.clientHeight);
-            //trabaja aqui, circulitos
+            topCanvasRef.current.width = window.innerWidth;
+            topCanvasRef.current.height = window.innerHeight;
 
             for(let i = 0; i < planetsRef.current.length; i++) {
                 //vector desde la camara al planeta
@@ -94,7 +93,7 @@ function UI() {
                 //angulo entre vector CP y C
                 const angle = vectorCP.angleTo(C.current); //el angulo está en radianes
 
-                if(angle < 1.309/2){ //75/2
+                if(angle < Math.PI/2) {
                     //distancia entre la camara y el planeta
                     //modulo de vectorCP
                     const distance = vectorCP.length();
@@ -105,14 +104,11 @@ function UI() {
                     const coordendas = centroCoordenadas(i);
 
                     //dibujar circulo
-                    ctx.beginPath();
-                    ctx.setLineDash([5, 15]);
-                    ctx.arc(window.width/2, window.height/2, 50, 0, 2 * Math.PI);
-                    ctx.strokeStyle = 'white';
-                    ctx.stroke();
+                    drawDashedCircle(coordendas.x, coordendas.y, radio);
 
                 }
             }
+
             requestAnimationFrame(render);
         }
 
@@ -120,6 +116,7 @@ function UI() {
 
     //eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
 
 
     useEffect(() => {
