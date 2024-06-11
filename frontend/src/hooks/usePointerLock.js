@@ -42,7 +42,11 @@ export const usePointerLock = (canvasRef, C, D, moving) => {
         };
 
         const onClick = () => {
-            canvas.requestPointerLock();
+            if (!document.pointerLockElement) {
+                canvas.requestPointerLock();
+            } else {
+                document.exitPointerLock();
+            }
         };
 
         canvas.addEventListener('click', onClick);

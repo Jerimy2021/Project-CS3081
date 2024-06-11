@@ -2,29 +2,52 @@ import "./informacion.css";
 import React from "react";
 import { useState, useEffect } from "react";
 
-function Informacion({selectedPlanetRef}) {
-
-    const [isVisible, setIsVisible] = useState(false);
-    useEffect(() => {
-        // Comprueba si la lista no está vacía
-        console.log("holi:", selectedPlanetRef.current)
-        if (selectedPlanetRef.current && selectedPlanetRef.current.length > 0) {
-            setIsVisible(true);
-        } else {
-            setIsVisible(false);
-        }
-    }, [selectedPlanetRef.current]);
-
+function Informacion({isVisible, info}) {
     return (
-        isVisible &&(
+        isVisible && (
             <div className="informacion">
                 <div id="leftInformacion" className="container">
-                    <h1>Información</h1>
-                    <p>En esta página se muestra información sobre el proyecto, los integrantes y el propósito de la página.</p>
+                    <div className="planetName">
+                        <h1>{info.name}</h1>
+                    </div>
+                    <div className="planetData">
+                        <label>Radius:</label>
+                        <p>{info.planet_radius}</p>
+                        <label>Mass:</label>
+                        <p>{info.planet_mass}</p>
+                        <label>Density:</label>
+                        <p>{info.planet_density}</p>
+                        <label>Equilibrium temperature:</label>
+                        <p>{info.planet_eqt}</p>
+                        <label>Transit mid-point:</label>
+                        <p>{info.planet_tranmid}</p>
+                    </div>
                 </div>
                 <div id="rightInformacion" className="container">
-                    <h1>Integrantes</h1>
-                    <p>Este proyecto fue realizado por los estudiantes de la Universidad de Minnesota:</p>
+                    <div className="discoveryData">
+                        <label>Discovery year:</label>
+                        <p>{info.discovery_year}</p>
+                        <label>Discovery method:</label>
+                        <p>{info.discovery_method}</p>
+                        <label>Discovery reference:</label>
+                        <p>{info.discovery_reference}</p>
+                        <label>Discovery telescope:</label>
+                        <p>{info.discovery_telescope}</p>
+                    </div>
+                    <div className="stellarData">
+                        <label>Host name:</label>
+                        <p>{info.host_name}</p>
+                        <label>Orbital period:</label>
+                        <p>{info.orbital_period}</p>
+                        <label>Orbit semi-major axis:</label>
+                        <p>{info.orbit_semi_major_axis}</p>
+                        <label>Stellar luminosity:</label>
+                        <p>{info.stellar_lum}</p>
+                        <label>Stellar age:</label>
+                        <p>{info.stellar_age}</p>
+                        <label>Stellar mass:</label>
+                        <p>{info.stellar_mass}</p>
+                    </div>
                 </div>
             </div>
         )

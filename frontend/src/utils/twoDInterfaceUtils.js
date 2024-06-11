@@ -45,6 +45,7 @@ export const drawCircleAroundPlanets = (topCanvasRef, planetsRef, cameraRef, C, 
     
     selectedPlanetsRef.current = [];
 
+
     for(let i = 0; i < planetsRef.current.length; i++) {
         //vector desde la camara al planeta
         let vectorCP = new THREE.Vector3();
@@ -133,15 +134,22 @@ export const drawSpeedometer = (topCanvasRef, speedUp, maxSpeedUp, ctx) => {
 }
 
 
-export const MenuKeysDown = (e, selectedPlanetsRef, planetsRef, cameraRef, C, D, topCanvasRef) => {
+export const MenuKeysDown = (e, selectedPlanetsRef, planetsRef, cameraRef, C, D, topCanvasRef, setFixedPlanetData, setVisibleInfoBool, visibleInfBoolRef) => {
     if (e.key === 'f') {
         if (selectedPlanetsRef.current.length > 0) {
+            // set camera position
             const planet = planetsRef.current[selectedPlanetsRef.current[0]];
             const radio = planet.geometry.parameters.radius;
             const targetRadius = 150;
             cameraRef.current.position.set(planet.position.x - distanciaParaRadioEspecifico(targetRadius, radio, topCanvasRef), planet.position.y, planet.position.z);
             C.current = new THREE.Vector3(1, 0, 0);
             D.current = new THREE.Vector3(0, 0, -1);
+
+            //set the fixed planet data
+            setFixedPlanetData(planet.planet_data);
+            setVisibleInfoBool(true);
+            visibleInfBoolRef.current = true;
+            document.exitPointerLock();
         }
     }
 
