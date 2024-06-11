@@ -1,52 +1,59 @@
 import "./informacion.css";
 import React from "react";
-import { useState, useEffect } from "react";
 
-function Informacion({isVisible, info}) {
+import { adaptPlanetData } from "../../utils/adapters/apiAdapterInfo";
+
+function Informacion({isVisible, info, infoDivRef}) {
+    const [data, setData] = React.useState({});
+
+    React.useEffect(() => {
+        setData(adaptPlanetData(info));
+    }, [info]);
     return (
         isVisible && (
-            <div className="informacion">
+            <div className="informacion" ref={infoDivRef}>
                 <div id="leftInformacion" className="container">
                     <div className="planetName">
-                        <h1>{info.name}</h1>
+                        <h1>{data.name}</h1>
                     </div>
                     <div className="planetData">
                         <label>Radius:</label>
-                        <p>{info.planet_radius}</p>
+                        <p>{data.planet_radius}</p>
                         <label>Mass:</label>
-                        <p>{info.planet_mass}</p>
+                        <p>{data.planet_mass}</p>
                         <label>Density:</label>
-                        <p>{info.planet_density}</p>
+                        <p>{data.planet_density}</p>
                         <label>Equilibrium temperature:</label>
-                        <p>{info.planet_eqt}</p>
+                        <p>{data.planet_eqt}</p>
                         <label>Transit mid-point:</label>
-                        <p>{info.planet_tranmid}</p>
+                        <p>{data.planet_tranmid}</p>
                     </div>
                 </div>
                 <div id="rightInformacion" className="container">
-                    <div className="discoveryData">
+                    <div className="discovery-stellar-data">
                         <label>Discovery year:</label>
-                        <p>{info.discovery_year}</p>
+                        <p>{data.discovery_year}</p>
                         <label>Discovery method:</label>
-                        <p>{info.discovery_method}</p>
+                        <p>{data.discovery_method}</p>
                         <label>Discovery reference:</label>
-                        <p>{info.discovery_reference}</p>
+                        <a
+                        href={data.discovery_reference}
+                        target="_blank"
+                        > click here to see the reference</a>
                         <label>Discovery telescope:</label>
-                        <p>{info.discovery_telescope}</p>
-                    </div>
-                    <div className="stellarData">
+                        <p>{data.discovery_telescope}</p>
                         <label>Host name:</label>
-                        <p>{info.host_name}</p>
+                        <p>{data.host_name}</p>
                         <label>Orbital period:</label>
-                        <p>{info.orbital_period}</p>
+                        <p>{data.orbital_period}</p>
                         <label>Orbit semi-major axis:</label>
-                        <p>{info.orbit_semi_major_axis}</p>
+                        <p>{data.orbit_semi_major_axis}</p>
                         <label>Stellar luminosity:</label>
-                        <p>{info.stellar_lum}</p>
+                        <p>{data.stellar_lum}</p>
                         <label>Stellar age:</label>
-                        <p>{info.stellar_age}</p>
+                        <p>{data.stellar_age}</p>
                         <label>Stellar mass:</label>
-                        <p>{info.stellar_mass}</p>
+                        <p>{data.stellar_mass}</p>
                     </div>
                 </div>
             </div>

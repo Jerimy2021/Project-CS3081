@@ -32,10 +32,11 @@ def get_planets(stellar_system):
         
         encoded_stellar_system = urllib.parse.quote_plus(stellar_system)
 
-        api_url = f"https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+distinct(pl_name),sy_dist,ra,dec,pl_orbsmax,pl_orbeccen,pl_orbincl,pl_orblper,pl_orbtper,sy_dist,pl_radj,pl_rade+from+pscomppars+where+pl_name+like+%27%25{encoded_stellar_system}%25%27+order+by+pl_name+desc&format=csv"
+        api_url = f"https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+distinct(pl_name),sy_dist,ra,dec,pl_orbsmax,pl_orbeccen,pl_orbincl,pl_orblper,pl_orbtper,sy_dist,pl_radj,pl_rade,disc_year,discoverymethod,disc_refname,disc_telescope,hostname,pl_orbper,pl_bmassj,pl_dens,pl_eqt,pl_tranmid,st_lum,st_age,st_mass+from+pscomppars+where+pl_name+like+%27%25{encoded_stellar_system}%25%27+order+by+pl_name+desc&format=csv"
         headers = {
             'User-Agent': 'App'
         }
+
         response = requests.get(api_url, headers=headers)
 
         response_data = list(csv.reader(response.text.splitlines()))
@@ -58,6 +59,20 @@ def get_planets(stellar_system):
         planets = response_data[1:]
         def sumchars(s):
             return sum(ord(c) for c in s)
+        
+        def a_tag_get_link(string):
+            match = ""
+            prev = ""
+            for i in range(len(string)):
+                prev += string[i]
+                if len(prev) >= 5:
+                    if prev[-5:] == "href=":
+                        match = string[i+1:]
+                        break
+
+            match = match.split(' ')[0]
+
+            return match if match else string
         planets = [
             {
                 'name': planet[0],
@@ -72,6 +87,19 @@ def get_planets(stellar_system):
                 'sy_dist': planet[9], #Distance to the planetary system in units of parsecs
                 'radius_jupiter': planet[10],
                 'radius_earth': planet[11],
+                'discovery_year': planet[12],
+                'discovery_method': planet[13],
+                'discovery_reference': a_tag_get_link(planet[14]),
+                'discovery_telescope': planet[15],
+                'host_name': planet[16],
+                'orbital_period': planet[17],
+                'planet_mass': planet[18],
+                'planet_density': planet[19],
+                'planet_eqt': planet[20],
+                'planet_tranmid': planet[21],
+                'stellar_lum': planet[22],
+                'stellar_age': planet[23],
+                'stellar_mass': planet[24],
                 'coordinates': calculate_position({
                     'orbsmax': float(planet[4]) if planet[4] else 0, #Semi-eje mayor en AU (AU es la unidad de distancia entre la Tierra y el Sol)
                     'orbeccen: ': float(planet[5]) if planet[5] else 0, #Excentricidad (es un número entre 0 y 1, si es 0 es una órbita circular y si es 1 es una órbita parabólica)

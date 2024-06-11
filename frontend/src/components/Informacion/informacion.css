@@ -6,10 +6,10 @@
   left: 0;
   justify-content: space-between;
   padding: 10px;
-  z-index: 999; /* por encima del topCanvas */	
+  z-index: 1001; /* por encima del topCanvas */	
   width: 100%;
   height: 100%;
-
+  overflow: hidden;
 }
 
 .container {
@@ -19,32 +19,19 @@
   align-items: flex-start;
   width: 33%;
   height: 100%;
-  padding: 100px;
+  padding: 7%;
 }
 
-.discoveryData {
-  border: 2px dashed var(--secondary-color);
-  border-bottom: none;
+.discovery-stellar-data {
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 50%;
+  height: 100%;
   justify-content: space-evenly;
   align-items: space-evenly;
   padding-left: 10px;
-  border-radius: 10px 10px 0 0;
-}
-
-.stellarData {
   border: 2px dashed var(--secondary-color);
-  border-top: none;
-  width: 100%;
-  height: 50%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  padding-left: 10px;
-  border-radius: 0 0 10px 10px;
+  border-radius: 10px;
 }
 
 .planetName {
@@ -75,9 +62,15 @@
   border-radius: 0 0 10px 10px;
 }
 
-.informacion .container p{
+.informacion .container p, a{
   font-size: 15px;
+  color: var(--primary-color-text);
 }
+
+.informacion .container a{
+  text-decoration: underline;
+}
+
 
 .informacion .container label{
   font-size: 12px;

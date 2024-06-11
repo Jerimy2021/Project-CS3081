@@ -140,7 +140,7 @@ export const MenuKeysDown = (e, selectedPlanetsRef, planetsRef, cameraRef, C, D,
             // set camera position
             const planet = planetsRef.current[selectedPlanetsRef.current[0]];
             const radio = planet.geometry.parameters.radius;
-            const targetRadius = 150;
+            const targetRadius = window.innerWidth / 9;
             cameraRef.current.position.set(planet.position.x - distanciaParaRadioEspecifico(targetRadius, radio, topCanvasRef), planet.position.y, planet.position.z);
             C.current = new THREE.Vector3(1, 0, 0);
             D.current = new THREE.Vector3(0, 0, -1);

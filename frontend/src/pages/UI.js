@@ -24,25 +24,6 @@ function loadData(setStellarSystems, setSelectedStellarSystem, setPlanets) {
     }
 }
 
-const data = {
-    "name": "Earth",
-    "planet_radius": "1 Earth Radius",
-    "planet_mass": "1 Earth Mass",
-    "planet_density": "5.51 g/cm³",
-    "planet_eqt": "288 K",
-    "planet_tranmid": "100 days",
-    "discovery_year": "2024",
-    "discovery_method": "Space-based telescope",
-    "discovery_reference": "JPL Publication 21-456",
-    "discovery_telescope": "James Webb Space Telescope",
-    "host_name": "Sun",
-    "orbital_period": "365.25 days",
-    "orbit_semi_major_axis": "1 AU",
-    "stellar_lum": "0 log10(Solar)",
-    "stellar_age": "4.6 Gyr",
-    "stellar_mass": "1 Solar Mass"
-}
-
 
 function UI() {
     const [stellar_systems, setStellarSystems] = useState([{ name: "Undefined" }]);
@@ -56,9 +37,11 @@ function UI() {
     const planetsRef = useRef([]);
 
     const topCanvasRef = useRef({ current: { width: 0, height: 0, clientWidth: 0, clientHeight: 0 } });
+
+    const infoDivRef = useRef({ current: { width: 0, height: 0, clientWidth: 0, clientHeight: 0 } });
     
     const selectedPlanetsRef = useRef([]); 
-    const [fixedPlanetData, setFixedPlanetData] = useState(data);
+    const [fixedPlanetData, setFixedPlanetData] = useState({});
 
     const speedUp = useRef(0);
     const maxSpeedUp = 5000;
@@ -119,7 +102,7 @@ function UI() {
         <div className="UI jalar-a-derecha">
             <LoadWindow loaded={planetsRef.current.length > 0} />
             <canvas className="topCanvas" ref={topCanvasRef} />
-            <ThreeDInterface planets={planets} cameraRef={cameraRef} sceneRef={sceneRef} C={C} D={D} topCanvasRef={topCanvasRef} planetsRef={planetsRef} speedUp={speedUp} maxSpeedUp={maxSpeedUp} />
+            <ThreeDInterface planets={planets} cameraRef={cameraRef} sceneRef={sceneRef} C={C} D={D} topCanvasRef={infoDivRef} planetsRef={planetsRef} speedUp={speedUp} maxSpeedUp={maxSpeedUp} />
             <div className="controles">
                 <p>Press K to 'Control key menu'</p>
                 <p>Press F to 'Focus on a planet'</p>
@@ -131,7 +114,7 @@ function UI() {
                 +
             </div>
             <StellarName name={stellar_systems.length > 0 ? stellar_systems[selected_stellar_system].name : "Undefined"} />  
-            <Informacion isVisible={visibleInfoBool} info={fixedPlanetData} />
+            <Informacion isVisible={visibleInfoBool} info={fixedPlanetData} ref={infoDivRef} />
         </div>  
     );
 }
