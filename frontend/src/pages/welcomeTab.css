@@ -1,0 +1,17 @@
+.WelcomeTab {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  background-color: var(--background-color); 
+}
+
+.main {
+  width: 80%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
