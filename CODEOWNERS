@@ -1,0 +1,15 @@
+# This is the CODEOWNERS file for our repository.
+
+# Default owners for everything in the repository
+* @CdeCasurpie @melisa2505 @Jerimy2021 @darkblackv32
+
+# Specific owners for certain directories or files
+/backend/ @Jerimy2021 @CdeCasurpie
+/frontend/ @CdeCasurpie @darkblackv32 @melisa2505
+
+# Ownership for specific file types
+*.md @CdeCasurpie @Jerimy2021 @melisa2505 @darkblackv32
+*.js @CdeCasurpie @darkblackv32
+*.py @Jerimy2021 @melisa2505
+
+
