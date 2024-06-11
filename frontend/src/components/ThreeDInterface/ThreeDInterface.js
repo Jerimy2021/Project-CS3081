@@ -8,7 +8,7 @@ import { addStellars } from '../../utils/sceneSetup';
 
 import '../ThreeDInterface/ThreeDInterface.css';
 
-const ThreeDInterface = ({ planets, cameraRef, sceneRef, C, D, topCanvasRef, planetsRef }) => {
+const ThreeDInterface = ({ planets, cameraRef, sceneRef, C, D, topCanvasRef, planetsRef, speedUp, maxSpeedUp }) => {
     // Refs
     const canvasRef = useRef(null);
     const rendererRef = useRef(null);
@@ -20,7 +20,9 @@ const ThreeDInterface = ({ planets, cameraRef, sceneRef, C, D, topCanvasRef, pla
         up: false,
         down: false 
     });
-    const speed = 2;
+    const speed = 0.05*1000;
+
+    const speedingUp = useRef(false);
 
 
     // Pointer lock
@@ -28,7 +30,7 @@ const ThreeDInterface = ({ planets, cameraRef, sceneRef, C, D, topCanvasRef, pla
 
     // Initialize scene
     useEffect(() => {
-        startScene(canvasRef, rendererRef, cameraRef, sceneRef, C, D, moving, speed, planets, planetsRef);
+        startScene(canvasRef, rendererRef, cameraRef, sceneRef, C, D, moving, speed, planets, planetsRef, speedUp, speedingUp, maxSpeedUp);
     
     //eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
