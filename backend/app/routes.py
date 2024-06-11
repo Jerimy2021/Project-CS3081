@@ -52,6 +52,8 @@ def get_planets(stellar_system):
                 'success': False,
                 'errors': ["Error 404: No data found for the specified stellar_system"]
             }), 404
+        
+        # veremos si mua puede hacer un cambio
 
         planets = response_data[1:]
         def sumchars(s):
