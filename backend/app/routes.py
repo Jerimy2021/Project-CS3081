@@ -18,7 +18,7 @@ quant_textures = 10
 @api_bp.route('/stellar_systems/<stellar_system>/planets', methods=['GET'])
 def get_planets(stellar_system):
     try:
-        if stellar_system == '':
+        if stellar_system is None or stellar_system == '':
             return jsonify({
                 'success': False,
                 'errors': ["Error 400: No stellar_system provided"]
