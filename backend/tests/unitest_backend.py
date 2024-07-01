@@ -6,6 +6,8 @@ from flask import current_app
 from flask_testing import TestCase
 from app import create_app
 
+# para correr los tests:
+# python -m unittest tests.unitest_backend
 
 class TestRoutes(TestCase):
 
