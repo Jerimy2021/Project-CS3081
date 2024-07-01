@@ -45,7 +45,7 @@ export const addStellars = (scene, stellars, planetsRef) => {
 
 
 
-export const startScene = (canvasRef, rendererRef, cameraRef, sceneRef, C, D, moving, speed, planets, planetsRef) => {
+export const startScene = (canvasRef, rendererRef, cameraRef, sceneRef, C, D, moving, speed, planets, planetsRef, speedUp, speedingUp, maxSpeedUp) => {
     // Start the scene
     const canvas = canvasRef.current;
     const renderer = new THREE.WebGLRenderer({ canvas });
@@ -61,7 +61,6 @@ export const startScene = (canvasRef, rendererRef, cameraRef, sceneRef, C, D, mo
     // Load stellars
     addStellars(scene, planets);
 
-
     // Initialize scene
     initializeScene(scene);
 
@@ -71,14 +70,35 @@ export const startScene = (canvasRef, rendererRef, cameraRef, sceneRef, C, D, mo
     onResize();
 
     // Camera movement
-    window.addEventListener('keydown', (event) => { movingKeysDown(event, moving.current); });
-    window.addEventListener('keyup', (event) => { movingKeysUp(event, moving.current); });
+    window.addEventListener('keydown', (event) => { movingKeysDown(event, moving.current, speedingUp); });
+    window.addEventListener('keyup', (event) => { movingKeysUp(event, moving.current, speedingUp); });
+
+    let lastTime = 0;
+    let deltaTime = 0;
+
 
     // Render
     const render = (time) => {
         if (!canvasRef.current) return;
+
+        deltaTime = time - lastTime;
+        lastTime = time;
+        console.log(speedUp.current);
+
+        if (speedingUp.current) {
+            speedUp.current = speedUp.current + (speedUp.current < maxSpeedUp ? 200*deltaTime/1000 : 0);
+            if (speedUp.current > maxSpeedUp) {
+                speedUp.current = maxSpeedUp;
+            }
+        } else {
+            speedUp.current = speedUp.current - (speedUp.current > 0 ? 500*deltaTime/1000 : 0);
+            if (speedUp.current < 0) {
+                speedUp.current = 0;
+            }
+        }
+
         lookRespectToVectors(C.current, D.current, camera);
-        moveCamera(1, camera, C.current, D.current, moving.current, speed);
+        moveCamera(deltaTime/1000, camera, C.current, D.current, moving.current, speed, speedUp.current);
         renderer.render(scene, camera);
 
         //rotar los planetas

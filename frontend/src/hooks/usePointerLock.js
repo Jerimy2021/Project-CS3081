@@ -7,7 +7,7 @@ export const usePointerLock = (canvasRef, C, D, moving) => {
         const canvas = canvasRef.current;
 
         const onPointerLockChange = () => {
-            if (document.pointerLockElement === canvas) {
+            if (document.pointerLockElement === document.body) {
                 document.addEventListener('mousemove', onMouseMove, false);
             } else {
                 document.removeEventListener('mousemove', onMouseMove, false);
@@ -42,15 +42,19 @@ export const usePointerLock = (canvasRef, C, D, moving) => {
         };
 
         const onClick = () => {
-            canvas.requestPointerLock();
+            if (!document.pointerLockElement) {
+                document.body.requestPointerLock();
+            } else {
+                document.exitPointerLock();
+            }
         };
 
-        canvas.addEventListener('click', onClick);
+        window.addEventListener('click', onClick);
         document.addEventListener('pointerlockchange', onPointerLockChange, false);
 
 
         return () => {
-            canvas.removeEventListener('click', onClick);
+            window.removeEventListener('click', onClick);
             document.removeEventListener('pointerlockchange', onPointerLockChange, false);
             document.removeEventListener('mousemove', onMouseMove, false);
         };

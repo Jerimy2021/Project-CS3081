@@ -6,10 +6,6 @@
     height: 100vh;
 }
 
-p {
-    font-size: 12px;
-}
-
 .cross-center {
     position: absolute;
     display: flex;
@@ -29,6 +25,8 @@ p {
     top: 0;
     left: 0;
     padding: 10px;
+    z-index: 1002;
+    font-size: 12px;
 }
 
 .topCanvas {

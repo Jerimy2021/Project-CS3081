@@ -15,6 +15,7 @@ export const getStellarSphere = (stellar) => {
         roughness: 0.8,
     });
     const sphere = new THREE.Mesh(geometry, material);
+    sphere.planet_data = stellar;
     sphere.position.set(stellar.coordinates.x, stellar.coordinates.y, stellar.coordinates.z);
     return sphere;
 }
