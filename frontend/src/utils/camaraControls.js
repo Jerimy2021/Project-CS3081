@@ -1,29 +1,30 @@
 import * as THREE from 'three';
 
-export const moveCamera = (deltaTime, camera, C, D, moving, speed) => {
+export const moveCamera = (deltaTime, camera, C, D, moving, speed, speedUp) => {
     if (moving.forward) {
-        camera.position.addScaledVector(C, speed * deltaTime);
+        C.normalize();
+        camera.position.addScaledVector(C, (speed + speedUp) * deltaTime);
     }
     if (moving.backward) {
-        camera.position.addScaledVector(C, -speed * deltaTime);
+        camera.position.addScaledVector(C, -(speed + speedUp) * deltaTime);
     }
     if (moving.left) {
-        camera.position.addScaledVector(D, speed * deltaTime);
+        camera.position.addScaledVector(D, (speed + speedUp) * deltaTime);
     }
     if (moving.right) {
-        camera.position.addScaledVector(D, -speed * deltaTime);
+        camera.position.addScaledVector(D, -(speed + speedUp) * deltaTime);
     }
     const DCopy = D.clone();
     const up = DCopy.cross(C);
     if (moving.up) {
-        camera.position.addScaledVector(up, -speed * deltaTime);
+        camera.position.addScaledVector(up, -(speed + speedUp) * deltaTime);
     }
     if (moving.down) {
-        camera.position.addScaledVector(up, speed * deltaTime);
+        camera.position.addScaledVector(up, (speed + speedUp) * deltaTime);
     }
 };
 
-export const movingKeysDown = (event, moving) => {
+export const movingKeysDown = (event, moving, speedingUp) => {
     switch (event.key) {
         case 'w':
             moving.forward = true;
@@ -43,12 +44,15 @@ export const movingKeysDown = (event, moving) => {
         case ' ':
             moving.up = true;
             break;
+        case 'Control':
+            speedingUp.current = true;
+            break;
         default:
             break;
     }
 }
 
-export const movingKeysUp = (event, moving) => {
+export const movingKeysUp = (event, moving, speedingUp) => {
     switch (event.key) {
         case 'w':
             moving.forward = false;
@@ -67,6 +71,9 @@ export const movingKeysUp = (event, moving) => {
             break;
         case ' ':
             moving.up = false;
+            break;
+        case 'Control':
+            speedingUp.current = false;
             break;
         default:
             break;
