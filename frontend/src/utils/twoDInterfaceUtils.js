@@ -1,6 +1,28 @@
+/**
+ * @module Utils
+ */
+
 import * as THREE from 'three';
 
-export const drawCircleAroundPlanets = (topCanvasRef, planetsRef, cameraRef, C, selectedPlanetsRef, ctx) => {
+/** 
+    * DrawCircleAroundPlanets
+    *
+    * The function draws a dashed circle around the planets that are in the field of view of the camera.
+    * To make this, we create other functions like:
+    * - radioPixeles: Calculate the radius of the circle in pixels based on the distance of the planet to the camera.
+    * - centroCoordenadas: Calculate the center of the planet in the canvas.
+    * - drawDashedCircle: Draw the dashed circle around the planet.
+    * 
+    * @param {Object} topCanvasRef - Reference to the top canvas element.
+    * @param {Object} planetsRef - Reference to the planets array in the scene.
+    * @param {Object} cameraRef - Reference to the camera object.
+    * @param {Object} C - Reference to the vector C.
+    * @param {Object} selectedPlanetsRef - Reference to the selected planets array.
+    * @param {CanvasRenderingContext2D} ctx - Context of the canvas to draw the dashed circle.
+    * @returns {void}
+*/
+
+export function drawCircleAroundPlanets (topCanvasRef, planetsRef, cameraRef, C, selectedPlanetsRef, ctx) {
 
     const radioPixeles = (d, i, coordenadas) => {
         const radioUnits = planetsRef.current[i].geometry.parameters.radius;
@@ -77,7 +99,17 @@ export const drawCircleAroundPlanets = (topCanvasRef, planetsRef, cameraRef, C, 
     }
 }
 
-export const distanciaParaRadioEspecifico = (desiredRadius, radioUnits, topCanvasRef) => {
+/**
+    * DistanceToSpecificRadius
+
+    * The function calculates the distance needed to see a specific radius in the screen.
+    *
+    * @param {number} desiredRadius - The radius of the object to see.
+    * @param {number} radioUnits - The radius of the object in units.
+    * @param {Object} topCanvasRef - Reference to the top canvas element.
+    * @returns {number} - The distance needed to see the object with the desired radius.
+*/
+export function distanciaParaRadioEspecifico (desiredRadius, radioUnits, topCanvasRef) {
     // Asegurarse de que los elementos estén disponibles
     if (!topCanvasRef.current) return;
 
@@ -92,7 +124,19 @@ export const distanciaParaRadioEspecifico = (desiredRadius, radioUnits, topCanva
     return distance;
 }
 
-export const drawSpeedometer = (topCanvasRef, speedUp, maxSpeedUp, ctx) => {
+
+/**
+    * DrawSpeedometer
+    * 
+    * The function draws a speedometer in the right side of the top canvas. It indicates the speed of the camera.
+    * 
+    * @param {Object} topCanvasRef - Reference to the top canvas element.
+    * @param {Object} speedUp - Reference to the speed up object.
+    * @param {number} maxSpeedUp - The maximum speed up value.
+    * @param {CanvasRenderingContext2D} ctx - Context of the canvas to draw the speedometer.
+    * @returns {void}
+*/
+export function drawSpeedometer (topCanvasRef, speedUp, maxSpeedUp, ctx) {
     const drawSpeedometer = (x_margin, y, speedUp, maxSpeedUp) => {
         const x = topCanvasRef.current.width - x_margin*2;
 
@@ -133,6 +177,24 @@ export const drawSpeedometer = (topCanvasRef, speedUp, maxSpeedUp, ctx) => {
     drawSpeedometer(x, y, speedUp, maxSpeedUp);
 }
 
+/**
+ * MenuKeysDown
+ * 
+ * The function defines the actions to do when the user press a key in the keyboard. For example, to focuss a planet the user can press the 'f' key.
+ * 
+ * @param {KeyboardEvent} e - The event of the key pressed.
+ * @param {Object} selectedPlanetsRef - Reference to the selected planets array.
+ * @param {Object} planetsRef - Reference to the planets array in the scene.
+ * @param {Object} cameraRef - Reference to the camera object.
+ * @param {Object} C - Reference to the vector C.
+ * @param {Object} D - Reference to the vector D.
+ * @param {Object} topCanvasRef - Reference to the top canvas element.
+ * @param {function} setFixedPlanetData - Function to set the fixed planet data.
+ * @param {function} setVisibleInfoBool - Function to set the visible info boolean.
+ * @param {Object} visibleInfBoolRef - Reference to the visible info boolean.
+ * @returns {void}
+ *  
+*/
 
 export const MenuKeysDown = (e, selectedPlanetsRef, planetsRef, cameraRef, C, D, topCanvasRef, setFixedPlanetData, setVisibleInfoBool, visibleInfBoolRef) => {
     if (e.key === 'f') {

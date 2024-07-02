@@ -1,8 +1,22 @@
+/**
+ * @module Components
+ */
 import React from 'react';
 import './StellarSystemSelector.css';
 import * as THREE from 'three';
 import { serverURL } from '../../config/config';
 
+/**
+ * Stellar System Selector
+ * 
+ * The Stellar System Selector component is a canvas that shows a 3D representation of a stellar system.
+ * 
+ * @param {Object} props - The props of the component.
+ * @param {Object} props.stellarSystem - The stellar system object to show.
+ * @param {Object} props.conatinerRef - The reference to the container div.
+ * 
+ * @returns {JSX.Element} The StellarSystemSelector component
+*/
 function StellarSystemSelector({stellarSystem, conatinerRef}) {
     const canvasRef = React.useRef(null);
 

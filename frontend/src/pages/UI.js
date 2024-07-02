@@ -1,3 +1,6 @@
+/**
+ * @module Pages
+ */
 import React from "react";
 import StellarName from "../components/stellarName";
 import ThreeDInterface from "../components/ThreeDInterface/ThreeDInterface";
@@ -10,6 +13,16 @@ import { getStellarSystems, getPlanets } from "../utils/apiFunctions";
 import * as THREE from "three";
 import { drawCircleAroundPlanets, MenuKeysDown, drawSpeedometer} from "../utils/twoDInterfaceUtils";
 
+/**
+ * Load Data
+ * 
+ * Load the data from the local storage if it exists, otherwise it will fetch the data from the API
+ * 
+ * @param {function} setStellarSystems - Function to set the stellar systems
+ * @param {function} setSelectedStellarSystem - Function to set the selected stellar system
+ * @param {function} setPlanets - Function to set the planets
+ * @returns {void}
+ */
 function loadData(setStellarSystems, setSelectedStellarSystem, setPlanets) {
     const stellar_systems_local = JSON.parse(localStorage.getItem('stellarSystems'));
 
@@ -25,6 +38,15 @@ function loadData(setStellarSystems, setSelectedStellarSystem, setPlanets) {
 }
 
 
+/**
+ * UI
+ * 
+ * Main UI component: It will load the data and render the 2D and 3D interfaces, it also contains the main context for the 2D interface, the 3D scene references, and the camera references
+ * 
+ * This component contain all the layers for the UI, the 2D interface, the 3D interface, the load window, the stellar name, and the information window
+ * 
+ * @returns {JSX.Element} JSX Element
+ */
 function UI() {
     const [stellar_systems, setStellarSystems] = useState([{ name: "Undefined" }]);
     const [selected_stellar_system, setSelectedStellarSystem] = useState(0);

@@ -1,5 +1,18 @@
+/**
+    * @module Components 
+ */
+
+
 import "./ControlMenu.css";
 import KeyComponent from "../KeyComponent/KeyComponent";
+
+/**
+ * Cotrol Menu
+ * 
+ * This component is the control menu for the 2D interface, it contains the movement keys and the other keys for the interface.
+ * 
+ * @returns {JSX.Element} The ControlMenu component
+ */
 
 function ControlMenu() {
     return (
