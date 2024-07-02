@@ -1,0 +1,25 @@
+.key-component {
+    width: 8vh;
+    height: 10vh;
+    background-color: aqua;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.key-container {
+    border: 1px solid black;
+    width: 7vh;
+    height: 7vh;
+    background-color: yellow;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+}
+
+.description-container {
+    border-bottom: 1px solid black;
+}
+

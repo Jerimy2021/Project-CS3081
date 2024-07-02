@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: pages/UI.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: pages/UI.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module Pages
+ */
+import React from "react";
+import StellarName from "../components/stellarName";
+import ThreeDInterface from "../components/ThreeDInterface/ThreeDInterface";
+import LoadWindow from "../components/LoadWindow/LoadWindow";
+import Informacion from "../components/Informacion/informacion";
+import "./UI.css";
+
+import { useState, useEffect, useRef } from "react";
+import { getStellarSystems, getPlanets } from "../utils/apiFunctions";
+import * as THREE from "three";
+import { drawCircleAroundPlanets, MenuKeysDown, drawSpeedometer} from "../utils/twoDInterfaceUtils";
+
+/**
+ * Load Data
+ * 
+ * Load the data from the local storage if it exists, otherwise it will fetch the data from the API
+ * 
+ * @param {function} setStellarSystems - Function to set the stellar systems
+ * @param {function} setSelectedStellarSystem - Function to set the selected stellar system
+ * @param {function} setPlanets - Function to set the planets
+ * @returns {void}
+ */
+function loadData(setStellarSystems, setSelectedStellarSystem, setPlanets) {
+    const stellar_systems_local = JSON.parse(localStorage.getItem('stellarSystems'));
+
+    if (stellar_systems_local) {
+        setStellarSystems(stellar_systems_local);
+        const index = parseInt(localStorage.getItem('selectedStellarSystem'));
+        setSelectedStellarSystem(parseInt(index));
+
+        getPlanets(setPlanets, stellar_systems_local[index].name);
+    } else {
+        getStellarSystems(setStellarSystems);
+    }
+}
+
+
+/**
+ * UI
+ * 
+ * Main UI component: It will load the data and render the 2D and 3D interfaces, it also contains the main context for the 2D interface, the 3D scene references, and the camera references
+ * 
+ * This component contain all the layers for the UI, the 2D interface, the 3D interface, the load window, the stellar name, and the information window
+ * 
+ * @returns {JSX.Element} JSX Element
+ */
+function UI() {
+    const [stellar_systems, setStellarSystems] = useState([{ name: "Undefined" }]);
+    const [selected_stellar_system, setSelectedStellarSystem] = useState(0);
+    const [planets, setPlanets] = useState([]);
+
+    const cameraRef = useRef(null); 
+    const sceneRef = useRef(null);
+    const C = useRef(new THREE.Vector3(1, 0, 0)); // Camera direction
+    const D = useRef(new THREE.Vector3(0, 0, -1)); // Camera right direction
+    const planetsRef = useRef([]);
+
+    const topCanvasRef = useRef({ current: { width: 0, height: 0, clientWidth: 0, clientHeight: 0 } });
+
+    const infoDivRef = useRef({ current: { width: 0, height: 0, clientWidth: 0, clientHeight: 0 } });
+    
+    const selectedPlanetsRef = useRef([]); 
+    const [fixedPlanetData, setFixedPlanetData] = useState({});
+
+    const speedUp = useRef(0);
+    const maxSpeedUp = 5000;
+
+    const draw = useRef(true);
+
+    
+    // emergent windows
+    const [visibleInfoBool, setVisibleInfoBool] = useState(false);
+    const visibleInfBoolRef = useRef(false);
+
+    // Load planets
+    useEffect(() => {
+        loadData(setStellarSystems, setSelectedStellarSystem, setPlanets);
+        const ctx = topCanvasRef.current.getContext('2d');
+
+        //Configure key bindings for the 2D Menu
+        window.addEventListener('keydown', (e) => MenuKeysDown(e, selectedPlanetsRef, planetsRef, cameraRef, C, D, topCanvasRef, setFixedPlanetData, setVisibleInfoBool, visibleInfBoolRef));
+        window.addEventListener('click', (e) => {
+            if (visibleInfBoolRef.current) {
+                visibleInfBoolRef.current = false;
+                setVisibleInfoBool(false);
+            }
+        });
+
+        // Render function
+        const render = () => {
+            if (!topCanvasRef.current) return;
+
+            topCanvasRef.current.width = window.innerWidth;
+            topCanvasRef.current.height = window.innerHeight;
+
+            if (draw.current){
+                drawCircleAroundPlanets(topCanvasRef, planetsRef, cameraRef, C, selectedPlanetsRef, ctx);
+                drawSpeedometer(topCanvasRef, speedUp, maxSpeedUp, ctx);
+            }
+            requestAnimationFrame(render);
+        }
+
+        render();
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+
+    // Load planets
+    useEffect(() => {
+        if (!stellar_systems) return; // Wait for stellar systems to load
+        if (stellar_systems.length > 0) {
+            getPlanets(setPlanets, stellar_systems[selected_stellar_system].name);
+        }
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selected_stellar_system]);
+
+
+    
+    //puedes crear una función en el ui que se llame no c habilitar info o algo asi
+    return (
+        &lt;div className="UI jalar-a-derecha">
+            &lt;LoadWindow loaded={planetsRef.current.length > 0} />
+            &lt;canvas className="topCanvas" ref={topCanvasRef} />
+            &lt;ThreeDInterface planets={planets} cameraRef={cameraRef} sceneRef={sceneRef} C={C} D={D} topCanvasRef={infoDivRef} planetsRef={planetsRef} speedUp={speedUp} maxSpeedUp={maxSpeedUp} />
+            &lt;div className="controles">
+                &lt;p>Press K to 'Control key menu'&lt;/p>
+                &lt;p>Press F to 'Focus on a planet'&lt;/p>
+                &lt;p>Press C to change de stellar system&lt;/p>
+                &lt;p>Press B to report a bug&lt;/p>
+                &lt;p>Press E to exit&lt;/p>
+            &lt;/div>
+            &lt;div className="cross-center">
+                +
+            &lt;/div>
+            &lt;StellarName name={stellar_systems.length > 0 ? stellar_systems[selected_stellar_system].name : "Undefined"} />  
+            &lt;Informacion isVisible={visibleInfoBool} info={fixedPlanetData} ref={infoDivRef} />
+        &lt;/div>  
+    );
+}
+
+export default UI;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Components.html">Components</a></li><li><a href="module-Config.html">Config</a></li><li><a href="module-Hooks.html">Hooks</a></li><li><a href="module-Pages.html">Pages</a></li><li><a href="module-Utils.html">Utils</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Mon Jul 01 2024 22:01:22 GMT-0500 (hora estándar de Perú)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,8 +1,25 @@
+/**
+    * @module Components 
+ */
+
 import "./informacion.css";
 import React from "react";
 
 import { adaptPlanetData } from "../../utils/adapters/apiAdapterInfo";
 
+/**
+ * Informacion
+ * 
+ * This component is the information panel that shows the data of a planet when the user is on focuss mode.
+ * 
+ * @param {Object} props - The props of the component.
+ * @param {boolean} props.isVisible - The boolean that indicates if the information panel is visible.
+ * @param {Object} props.info - The information of the planet.
+ * @param {Object} props.infoDivRef - The reference to the information panel div.
+ * 
+ * @returns {JSX.Element} The Informacion component
+ * 
+ */
 function Informacion({isVisible, info, infoDivRef}) {
     const [data, setData] = React.useState({});
 

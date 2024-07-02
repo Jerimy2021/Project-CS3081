@@ -1,6 +1,18 @@
+/**
+ * @module Pages
+ */
+
 import React from 'react';
 import './contact.css';
 
+/**
+ * Contact page
+ * 
+ * This component is a page that contains a form to report bugs and an email to contact the developers. It contains links to the social media of the project.
+ * 
+ * @returns {HTMLDivElement} Contact page
+ * @component
+ */
 function Contact() {
   return (
     <div className="contact jalar-a-derecha">

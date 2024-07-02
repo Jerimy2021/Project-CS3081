@@ -1,3 +1,6 @@
+/**
+ * @module Components
+ */
 import React, { useRef, useEffect } from 'react';
 
 
@@ -8,7 +11,26 @@ import { addStellars } from '../../utils/sceneSetup';
 
 import '../ThreeDInterface/ThreeDInterface.css';
 
-const ThreeDInterface = ({ planets, cameraRef, sceneRef, C, D, topCanvasRef, planetsRef, speedUp, maxSpeedUp }) => {
+/**
+ * ThreeDInterface
+ * 
+ * The ThreeDInterface component is a canvas that shows a 3D representation of a stellar system.
+ * 
+ * @param {Object} props - The props of the component.
+ * @param {Array} props.planets - The planets to show.
+ * @param {Object} props.cameraRef - The reference to the camera object.
+ * @param {Object} props.sceneRef - The reference to the scene object.
+ * @param {Object} props.C - The reference to the vector C.
+ * @param {Object} props.D - The reference to the vector D.
+ * @param {Object} props.topCanvasRef - The reference to the top canvas element.
+ * @param {Object} props.planetsRef - The reference to the planets array in the scene.
+ * @param {Object} props.speedUp - The reference to the speed up object.
+ * @param {number} props.maxSpeedUp - The maximum speed up value.
+ * 
+ * @returns {JSX.Element} The ThreeDInterface component
+ * 
+    */  
+function ThreeDInterface({ planets, cameraRef, sceneRef, C, D, topCanvasRef, planetsRef, speedUp, maxSpeedUp }) {
     // Refs
     const canvasRef = useRef(null);
     const rendererRef = useRef(null);
