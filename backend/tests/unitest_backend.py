@@ -1,3 +1,8 @@
+"""
+This file contains the unit tests for the backend of the application.
+The tests are run using the unittest module.
+"""
+
 import unittest
 from unittest.mock import patch, MagicMock
 import sys
@@ -18,6 +23,9 @@ class TestRoutes(TestCase):
 
     @patch('app.routes.requests.get')
     def test_get_planets_success_200(self, mock_get):
+        """
+        Test the get_planets route with a successful response.
+        """
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.text = (
@@ -34,6 +42,9 @@ class TestRoutes(TestCase):
 
     @patch('app.routes.requests.get')
     def test_get_planets_failure_404(self, mock_get):
+        """
+        Test the get_planets route with a 404 response.
+        """
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.text = "pl_name,sy_dist,ra,dec,pl_orbsmax,pl_orbeccen,pl_orbincl,pl_orblper,pl_orbtper,sy_dist,pl_radj,pl_rade\n"
@@ -48,6 +59,9 @@ class TestRoutes(TestCase):
 
     @patch('app.routes.requests.get')
     def test_get_stellar_systems_success(self, mock_get):
+        """
+        Test the get_stellar_systems route with a successful response.
+        """
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.text = (
@@ -66,6 +80,9 @@ class TestRoutes(TestCase):
 
     @patch('app.routes.fetch_textures_planets')
     def test_get_textures_success(self, mock_fetch_textures):
+        """
+        Test the get_textures route with a successful response.
+        """
         mock_fetch_textures.return_value = "some_texture_url"
         
         response = self.client.get('/textures/earth')
@@ -76,6 +93,9 @@ class TestRoutes(TestCase):
 
     @patch('app.routes.requests.get')
     def test_get_planets_with_special_characters(self, mock_get):
+        """
+        Test the get_planets route with a successful response.
+        """
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.text = (
@@ -92,6 +112,9 @@ class TestRoutes(TestCase):
 
     @patch('app.routes.requests.get')
     def test_get_planets_empty_response(self, mock_get):
+        """
+        Test the get_planets route with an empty response.
+        """
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.text = "pl_name,sy_dist,ra,dec,pl_orbsmax,pl_orbeccen,pl_orbincl,pl_orblper,pl_orbtper,sy_dist,pl_radj,pl_rade\n"
@@ -106,6 +129,9 @@ class TestRoutes(TestCase):
 
     @patch('app.routes.requests.get')
     def test_get_stellar_systems_empty(self, mock_get):
+        """
+        Test the get_stellar_systems route with an empty response.
+        """
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.text = "sy_name,sy_pnum\n"
@@ -120,6 +146,9 @@ class TestRoutes(TestCase):
 
     @patch('app.routes.fetch_textures_planets')
     def test_get_textures_invalid_planet(self, mock_fetch_textures):
+        """
+        Test the get_textures route with an invalid planet.
+        """
         mock_fetch_textures.side_effect = Exception("Planet not found")
         
         response = self.client.get('/textures/invalid_planet')
@@ -129,15 +158,24 @@ class TestRoutes(TestCase):
         self.assertEqual(data['error'], "Planet not found")
 
     def test_get_planets_no_stellar_system(self):
+        """
+        Test the get_planets route with no stellar system.
+        """
         response = self.client.get('/stellar_systems//planets')
         self.assertEqual(response.status_code, 404)
 
     def test_get_planets_with_null(self):
+        """
+        Test the get_planets route with null stellar system.
+        """
         response = self.client.get('/stellar_systems/null/planets')
         self.assertEqual(response.status_code, 404)
 
     @patch('app.routes.requests.get')
     def test_get_stellar_systems_failure_500(self, mock_get):
+        """
+        Test the get_stellar_systems route with a 500 response.
+        """
         mock_response = MagicMock()
         mock_response.status_code = 500
         mock_get.return_value = mock_response
@@ -148,6 +186,9 @@ class TestRoutes(TestCase):
 
     @patch('app.routes.fetch_textures_planets')
     def test_get_textures_failure_500(self, mock_fetch_textures):
+        """
+        Test the get_textures route with a 500 response
+        """
         mock_fetch_textures.side_effect = Exception("Internal Server Error")
         
         response = self.client.get('/textures/earth')

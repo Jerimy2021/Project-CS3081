@@ -1,3 +1,7 @@
+"""
+This module contains the API routes for the application. The routes are used to fetch information about planets and stellar systems from the Exoplanet Archive API.
+"""
+
 from flask import Blueprint, request, jsonify, abort
 from .utils import fetch_textures_planets, fetch_planets_error, calculate_position
 from .utils import solar_system
@@ -17,6 +21,73 @@ quant_textures = 10
 
 @api_bp.route("/stellar_systems/<stellar_system>/planets", methods=["GET"])
 def get_planets(stellar_system):
+    """
+    Fetches information about planets within a specified stellar system.
+
+    Args:
+        stellar_system (str): The name of the stellar system.
+
+    Returns:
+        tuple: A tuple containing JSON response with planet data and HTTP status code.
+               Returns an error message and HTTP status code 400 if no stellar_system is provided.
+               Returns data for the solar system and HTTP status code 200 if 'sun' is specified as stellar_system.
+               Returns an error message and HTTP status code 404 if no data is found for the specified stellar_system.
+    
+    Example:
+        >>> get_planets("sun")
+        (
+            {
+                "success": True,
+                "errors": [],
+                "data": {
+                    "planets": [
+                        {
+                            "name": "Earth",
+                            "distance": "1.000000",
+                            "ra": "0.000000",
+                            "dec": "0.000000",
+                            "orbsmax": "1.000000",
+                            "orbeccen": "0.016710",
+                            "orbincl": "0.000000",
+                            "orblper": "102.930058",
+                            "orbtper": "2451545.000000",
+                            "sy_dist": "0.000015",
+                            "radius_jupiter": "1.000000",
+                            "radius_earth": "1.000000",
+                            "discovery_year": "0",
+                            "discovery_method": "Transit",
+                            "discovery_reference": "https://ui.adsabs.harvard.edu/abs/2018ApJ...860...68H/abstract",
+                            "discovery_telescope": "Kepler",
+                            "host_name": "Sun",
+                            "orbital_period": "365.256363",
+                            "planet_mass": "0.003147",
+                            "planet_density": "5.513603",
+                            "planet_eqt": "254.000000",
+                            "planet_tranmid": "2451545.000000",
+                            "stellar_lum": "1.000000",
+                            "stellar_age": "4600000000.000000",
+                            "stellar_mass": "1.000000",
+                            "coordinates": {
+                                "x": 1.000000,
+                                "y": 0.000000,
+                                "z": 0.000000
+                            },
+                            "textures": {
+                                "diffuse": "/static/planet_textures/planet_bk1.png",
+                                "normal": "",
+                                "specular": "",
+                                "emissive": "",
+                                "opacity": "",
+                                "ambient": ""
+                            },
+                            "radius": "1.000000"
+                        }
+                    ]
+                }
+            },
+            200
+        )
+    """
     try:
         if stellar_system == "":
             return (
@@ -167,6 +238,36 @@ def get_planets(stellar_system):
 
 @api_bp.route("/stellar_systems", methods=["GET"])
 def stellar_systems():
+    """
+    Fetches information about stellar systems and the number of planets they host.
+
+    Returns:
+        tuple: A tuple containing JSON response with stellar system data and HTTP status code.
+               Returns an error message and HTTP status code 404 if no data is found.
+    
+    Example:
+        >>> stellar_systems()
+        (
+            {
+                "success": True,
+                "errors": [],
+                "data": {
+                    "stellar_systems": [
+                        {
+                            "name": "Sun",
+                            "num_planets": 8
+                        },
+                        {
+                            "name": "Kepler-90",
+                            "num_planets": 8
+                        },
+                        ...
+                    ]
+                }
+            },
+            200
+        )
+    """
     try:
         api_url = "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+distinct(sy_name),sy_pnum+from+stellarhosts+order+by+sy_pnum+desc&format=csv"
         headers = {"User-Agent": "App"}
@@ -219,6 +320,25 @@ def stellar_systems():
 
 @api_bp.route("/textures/<planet_id>", methods=["GET"])
 def textures(planet_id):
+    """
+    Fetches textures for a specific planet.
+
+    Args:
+        planet_id (str): The ID or name of the planet.
+
+    Returns:
+        tuple: A tuple containing JSON response with texture URL and HTTP status code.
+               Returns an error message and HTTP status code 404 if the textures are not found.
+        
+    Example:
+        >>> textures("earth")
+        (
+            {
+                "texture_url": "/static/planet_textures/planet_bk1.png"
+            },
+            200
+        )
+    """
     try:
         textures_data = fetch_textures_planets(planet_id)
         return jsonify({"texture_url": textures_data})

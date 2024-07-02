@@ -1,3 +1,7 @@
+"""
+This module contains utility functions for the application. The functions are used to calculate the position of celestial objects, extract planet names from filenames, and fetch texture data for planets.
+"""
+
 import requests
 import urllib.parse
 import csv
@@ -11,17 +15,20 @@ import numpy as np
 
 
 def calculate_position(orbital_parameters, theta):
+    """
+    Calculate the position coordinates (x, y, z) of a celestial object based on orbital parameters.
 
-    # Calcula las coordenadas x, y, z de un planeta en relación con su estrella anfitriona.
+    Args:
+        orbital_parameters (dict): Dictionary containing orbital parameters:
+            - 'orbsmax' (float): Semi-major axis in astronomical units (AU).
+        theta (float): Angle in radians.
 
-    # Parameters:
-    # orbital_parameters (dict): Parámetros orbitales del planeta.
-    # theta (float): Ángulo de la anomalía verdadera en radianes.
-
-    # Returns:
-    # tuple: Coordenadas x, y, z.
-
-    # actualizar seed del random con orbital
+    Returns:
+        dict: Dictionary with calculated coordinates:
+            - 'x' (int): X-coordinate.
+            - 'y' (int): Y-coordinate.
+            - 'z' (int): Z-coordinate.
+    """
     random.seed(orbital_parameters["orbsmax"])
 
     return {
@@ -32,6 +39,15 @@ def calculate_position(orbital_parameters, theta):
 
 
 def extract_planet_name(filename):
+    """
+    Extract the planet name from a given filename.
+
+    Args:
+        filename (str): The filename from which to extract the planet name.
+
+    Returns:
+        str or None: Extracted planet name if found, None otherwise.
+    """
     match = re.search(r"2k_(.+)\.jpg", filename)
     if match:
         return match.group(1)
@@ -39,24 +55,42 @@ def extract_planet_name(filename):
 
 
 class fetch_planets_error(Exception):
+    """
+    Custom exception raised when there is an error fetching planet data.
+    """
     pass
 
 
 def fetch_textures_planets(planet_id):
+    """
+    Fetches the texture URL for a specific planet.
+
+    Args:
+        planet_id (str): The ID or name of the planet.
+
+    Returns:
+        str: URL of the texture image if found.
+
+    Raises:
+        fetch_planets_error: If no data is found for the specified planet (HTTP status code 404 or 500).
+    """
     if planet_id == "":
         raise fetch_planets_error("Error 404: No data found for the specified planet")
+    
     url = "https://www.solarsystemscope.com/textures/"
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
     }
+    
     response = requests.get(url, headers=headers)
+    
     if response.status_code == 500:
         raise fetch_planets_error("Error 500")
-
+    
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, "html.parser")
         textures = soup.find_all("a", class_="btn-type-1-blue texture-download-button")
-
+        
         for texture in textures:
             download_link = texture["href"]
             if "2k" in download_link:
@@ -64,13 +98,14 @@ def fetch_textures_planets(planet_id):
                 if name_planet == planet_id:
                     full_download_link = urljoin(url, download_link)
                     image_response = requests.get(full_download_link)
-
+                    
                     if image_response.status_code == 200:
                         return full_download_link
                     else:
-                        raise fetch_planets_error(
-                            "Error 404: No data found for the specified planet"
-                        )
+                        raise fetch_planets_error("Error 404: No data found for the specified planet")
+
+    raise fetch_planets_error("Error 404: No data found for the specified planet")
+
 
 
 # defalut solar system

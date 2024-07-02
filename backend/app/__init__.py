@@ -4,6 +4,9 @@ from .routes import api_bp
 
 
 def create_app():
+    """
+    This function creates the Flask app and registers the blueprint for the API routes. Also configures CORS to allow access from any origin.
+    """
     app = Flask(__name__)
 
     # Configuración de CORS para permitir acceso a la API desde cualquier origen
