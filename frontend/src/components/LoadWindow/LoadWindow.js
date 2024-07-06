@@ -1,24 +1,28 @@
-/**
- * @module Components
- */
-import React from "react";
-
-import { useState, useEffect } from "react";
-
+import React, { useState, useEffect } from "react";
 import "./LoadWindow.css";
 
 function LoadWindow({ loaded }) {
     const [loading, setLoading] = useState(true);
+    const [slide, setSlide] = useState(false);
 
     useEffect(() => {
         if (loaded) {
-            setLoading(false);
+            setSlide(true);
+            const timer = setTimeout(() => setLoading(false), 500); // Tiempo suficiente para la animación
+            return () => clearTimeout(timer);
+        } else {
+            setLoading(true);
+            setSlide(false);
         }
     }, [loaded]);
 
     return (
-        <div className="load-window" style={{ display: loading ? "flex" : "none" }}>
-            <div className="loader"></div>
+        <div className={`load-window ${loading ? "active" : ""} ${slide ? "slide-out" : ""}`}>
+            <div className="loader-dots">
+                <div className="dot"></div>
+                <div className="dot"></div>
+                <div className="dot"></div>
+            </div>
         </div>
     );
 }

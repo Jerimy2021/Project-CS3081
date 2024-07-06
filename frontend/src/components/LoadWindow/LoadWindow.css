@@ -1,29 +1,56 @@
+/* LoadWindow.css */
+
 .load-window {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
+  background-color: rgb(25, 25, 25);
+  display: none;
   justify-content: center;
   align-items: center;
+  z-index: 100000;
+  opacity: 1;
+  transform: translateY(0);
+  transition: 1s ease all;
 }
 
-.loader {
-  border: 16px solid #f3f3f3;
-  border-top: 16px solid #3498db;
+.load-window.active {
+  display: flex;
+}
+
+.load-window.slide-out {
+  opacity: 0;
+  transform: translateY(-100%);
+}
+
+.loader-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.dot {
+  width: 16px;
+  height: 16px;
+  background-color: #ffffff;
   border-radius: 50%;
-  width: 120px;
-  height: 120px;
-  animation: spin 2s linear infinite;
+  animation: dotPulse 1s infinite ease-in-out;
 }
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
+.dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes dotPulse {
+  0%, 80%, 100% {
+    transform: scale(1) translateY(0);
   }
-  100% {
-    transform: rotate(360deg);
+  50% {
+    transform: scale(1.2) translateY(8px);
   }
 }
