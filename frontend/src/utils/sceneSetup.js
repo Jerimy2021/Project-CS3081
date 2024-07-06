@@ -3,6 +3,8 @@
  */
 
 import * as THREE from 'three';
+import texture from '../assets/backgroundGalaxy.hdr';
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 
 // Importación de funciones auxiliares para el control de la cámara y el redimensionamiento
 import { lookRespectToVectors, movingKeysDown, movingKeysUp, moveCamera } from './camaraControls';
@@ -16,31 +18,9 @@ import { getStellarSphere } from './stellarsFunctions';
  * @param {THREE.Scene} scene - Objeto de Three.js que representa la escena.
  */
 export function initializeScene(scene) {
-    // Crear puntos aleatorios en la escena para demostración
-    const n = 10000; // Número de cubos
-    const geometry = new THREE.SphereGeometry(3, 5, 5); // Geometría esférica básica
-    const distance = 7000; // Distancia máxima para las posiciones aleatorias
-
-    for (let i = 0; i < n; i++) {
-        // Generar un color aleatorio para cada cubo
-        let color = Math.random() * 0xff;
-        color = (color << 16) | (color << 8) | color;
-
-        // Crear material básico para el cubo con color aleatorio
-        const material = new THREE.MeshBasicMaterial({ color: color });
-
-        // Crear un cubo Mesh y asignarle posición aleatoria en la escena
-        const cube = new THREE.Mesh(geometry, material);
-        cube.position.x = Math.random() * distance * 2 - distance;
-        cube.position.y = Math.random() * distance * 2 - distance;
-        cube.position.z = Math.random() * distance * 2 - distance;
-
-        // Agregar el cubo a la escena
-        scene.add(cube);
-    }
 
     // Luz direccional para iluminar los objetos en la escena
-    const light = new THREE.DirectionalLight(0xffffff, 1);
+    const light = new THREE.DirectionalLight(0xffffff, 2.1);
     light.position.set(0, 0, 1);
     scene.add(light);
 
@@ -117,6 +97,19 @@ export function startScene(canvasRef, rendererRef, cameraRef, sceneRef, C, D, mo
 
     let lastTime = 0;
     let deltaTime = 0;
+
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 0.15;
+
+
+    const urlHDR = new URL(texture, window.location.href).href;
+
+    const loader = new RGBELoader();
+    loader.load(urlHDR, function (texture) {
+        //bajar brill
+        texture.mapping = THREE.EquirectangularReflectionMapping;
+        scene.background = texture;
+    });
 
     /**
      * Render

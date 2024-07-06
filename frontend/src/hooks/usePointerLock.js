@@ -20,8 +20,6 @@ import { rotationMatrix } from '../utils/camaraControls'
  */
 export function usePointerLock(canvasRef, C, D, moving) {
     useEffect(() => {
-        const canvas = canvasRef.current;
-
         const onPointerLockChange = () => {
             if (document.pointerLockElement === document.body) {
                 document.addEventListener('mousemove', onMouseMove, false);
