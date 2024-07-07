@@ -51,7 +51,7 @@ function StellarSystemSelector({ stellarSystem, conatinerRef }) {
 
 
                 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-                renderer.toneMappingExposure = 0.5;
+                renderer.toneMappingExposure = 0.25;
 
                 camera.position.z = 5;
 
