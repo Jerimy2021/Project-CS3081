@@ -31,10 +31,12 @@ def calculate_position(orbital_parameters, theta):
     """
     random.seed(orbital_parameters["orbsmax"])
 
+    scale = 20
+
     return {
-        "x": random.randint(-1000, 1000),
-        "y": random.randint(-1000, 1000),
-        "z": random.randint(-1000, 1000),
+        "x": random.randint(-1000*scale, 1000*scale),
+        "y": random.randint(-1000*scale, 1000*scale),
+        "z": random.randint(-1000*scale, 1000*scale),
     }
 
 

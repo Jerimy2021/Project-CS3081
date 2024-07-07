@@ -48,6 +48,7 @@ export function addStellars(scene, stellars, planetsRef) {
         const geometry = new THREE.DodecahedronGeometry(sphere.geometry.parameters.radius * 1.5, 0);
         const material = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true, color: 0x000000 });
         const wireframe = new THREE.Mesh(geometry, material);
+        scene.add(sphere);
         
         //color de lineas del wireframe
         wireframe.material.color.setHex(0xffffff);
@@ -56,8 +57,80 @@ export function addStellars(scene, stellars, planetsRef) {
         wireframe.position.set(sphere.position.x, sphere.position.y, sphere.position.z);
         scene.add(wireframe);
 
+        //añadir polvo alrededor 
+        const polvoGeometry = new THREE.SphereGeometry(0.01*sphere.geometry.parameters.radius, 32, 32);
+        const polvoMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        polvoMaterial.transparent = true;
+        polvoMaterial.opacity = 0.4;
+
+        const polvoList = [];
+
+        const amountParticles = sphere.geometry.parameters.radius * 30;
+        
+        for (let i = 0; i < amountParticles; i++) {
+            const polvo = new THREE.Mesh(polvoGeometry, polvoMaterial);
+            const dx = Math.random() * 2 - 1;
+            const dy = Math.random() * 2 - 1;
+            const dz = Math.random() * 2 - 1;
+
+            polvo.position.set(sphere.position.x + dx*sphere.geometry.parameters.radius*20,
+                sphere.position.y + dy*sphere.geometry.parameters.radius*20,
+                sphere.position.z + dz*sphere.geometry.parameters.radius*20);
+
+            scene.add(polvo);
+            polvoList.push({
+                mesh: polvo,
+                direction: new THREE.Vector3(
+                    Math.random() * 2 - 1,
+                    Math.random() * 2 - 1,
+                    Math.random() * 2 - 1
+                )
+            });
+        }
+
+        //mover polvo alrededor del planeta// orbitar
+        const speed = 0.003;
+        let deltaTime = 0;
+        let lastTime = 0;
+
+        const animatePolvo = () => {
+            deltaTime = Date.now() - lastTime;
+            lastTime = Date.now();
+
+            polvoList.forEach((polvo) => {
+                polvo.mesh.position.x += polvo.direction.x * speed * deltaTime * sphere.geometry.parameters.radius / 5;
+                polvo.mesh.position.y += polvo.direction.y * speed * deltaTime * sphere.geometry.parameters.radius / 5;
+                polvo.mesh.position.z += polvo.direction.z * speed * deltaTime * sphere.geometry.parameters.radius / 5;
+
+                const distance = polvo.mesh.position.distanceTo(sphere.position);
+
+                //si se sale del maximo teletransportar
+                if (distance > sphere.geometry.parameters.radius*20) {
+                    const dx = Math.random() * 2 - 1;
+                    const dy = Math.random() * 2 - 1;
+                    const dz = Math.random() * 2 - 1;
+
+                    polvo.mesh.position.set(sphere.position.x + dx*sphere.geometry.parameters.radius*20,
+                        sphere.position.y + dy*sphere.geometry.parameters.radius*20,
+                        sphere.position.z + dz*sphere.geometry.parameters.radius*20);
+
+                    polvo.direction.set(
+                        Math.random() * 2 - 1,
+                        Math.random() * 2 - 1,
+                        Math.random() * 2 - 1
+                    );
+                }
+            });
+        };
+
+        setInterval(animatePolvo, 1000 / 60);
+
+
+
+
+
+
         planetsRef.current.push(sphere);
-        scene.add(sphere);
     });
 };
 
@@ -122,6 +195,7 @@ export function startScene(canvasRef, rendererRef, cameraRef, sceneRef, C, D, mo
     loader.load(urlHDR, function (texture) {
         //bajar brill
         texture.mapping = THREE.EquirectangularReflectionMapping;
+        scene.background = texture;
         scene.environment = texture;
     });
 
@@ -179,4 +253,3 @@ export function startScene(canvasRef, rendererRef, cameraRef, sceneRef, C, D, mo
         window.removeEventListener('resize', onResize);
     };
 };
-
