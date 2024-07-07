@@ -53,9 +53,15 @@ function UI() {
     const [planets, setPlanets] = useState([]);
 
     const cameraRef = useRef(null); 
-    const sceneRef = useRef(null);
+    const cameraTargetPositionRef = useRef(new THREE.Vector3(0, 0, 0));
+    const cameraMovingRef = useRef(false);
+
     const C = useRef(new THREE.Vector3(1, 0, 0)); // Camera direction
     const D = useRef(new THREE.Vector3(0, 0, -1)); // Camera right direction
+
+    const sceneRef = useRef(null);
+    
+
     const planetsRef = useRef([]);
 
     const topCanvasRef = useRef({ current: { width: 0, height: 0, clientWidth: 0, clientHeight: 0 } });
@@ -81,7 +87,7 @@ function UI() {
         const ctx = topCanvasRef.current.getContext('2d');
 
         //Configure key bindings for the 2D Menu
-        window.addEventListener('keydown', (e) => MenuKeysDown(e, selectedPlanetsRef, planetsRef, cameraRef, C, D, topCanvasRef, setFixedPlanetData, setVisibleInfoBool, visibleInfBoolRef));
+        window.addEventListener('keydown', (e) => MenuKeysDown(e, selectedPlanetsRef, planetsRef, cameraRef, C, D, topCanvasRef, setFixedPlanetData, setVisibleInfoBool, visibleInfBoolRef, cameraTargetPositionRef, cameraMovingRef));
         window.addEventListener('click', (e) => {
             if (visibleInfBoolRef.current) {
                 visibleInfBoolRef.current = false;
@@ -89,8 +95,14 @@ function UI() {
             }
         });
 
+        let deltaTime = 0;
+        let lastTime = 0;
+
         // Render function
         const render = () => {
+            lastTime = Date.now();
+            deltaTime = Date.now() - lastTime;
+
             if (!topCanvasRef.current) return;
 
             topCanvasRef.current.width = window.innerWidth;
@@ -100,6 +112,16 @@ function UI() {
                 drawCircleAroundPlanets(topCanvasRef, planetsRef, cameraRef, C, selectedPlanetsRef, ctx);
                 drawSpeedometer(topCanvasRef, speedUp, maxSpeedUp, ctx);
             }
+
+            // lerp camera
+            if (cameraMovingRef.current) {
+                cameraRef.current.position.lerp(cameraTargetPositionRef.current, 0.1);
+
+                if (cameraRef.current.position.distanceTo(cameraTargetPositionRef.current) < 3) {
+                    cameraMovingRef.current = false;
+                }
+            }
+
             requestAnimationFrame(render);
         }
 

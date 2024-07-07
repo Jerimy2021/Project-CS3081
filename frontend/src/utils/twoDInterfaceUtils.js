@@ -199,16 +199,23 @@ export function drawSpeedometer (topCanvasRef, speedUp, maxSpeedUp, ctx) {
  *  
 */
 
-export const MenuKeysDown = (e, selectedPlanetsRef, planetsRef, cameraRef, C, D, topCanvasRef, setFixedPlanetData, setVisibleInfoBool, visibleInfBoolRef) => {
+export const MenuKeysDown = (e, selectedPlanetsRef, planetsRef, cameraRef, C, D, topCanvasRef, setFixedPlanetData, setVisibleInfoBool, visibleInfBoolRef, cameraTargetPositionRef, cameraMovingRef) => {
     if (e.key === 'f') {
         if (selectedPlanetsRef.current.length > 0) {
             // set camera position
             const planet = planetsRef.current[selectedPlanetsRef.current[0]];
             const radio = planet.geometry.parameters.radius;
             const targetRadius = window.innerWidth / 9;
-            cameraRef.current.position.set(planet.position.x - distanciaParaRadioEspecifico(targetRadius, radio, topCanvasRef), planet.position.y, planet.position.z);
-            C.current = new THREE.Vector3(1, 0, 0);
-            D.current = new THREE.Vector3(0, 0, -1);
+            const distancia = distanciaParaRadioEspecifico(targetRadius, radio, topCanvasRef);
+
+            const vectorCameraToPlanet = new THREE.Vector3();
+            vectorCameraToPlanet.subVectors(planet.position, cameraRef.current.position);
+            vectorCameraToPlanet.normalize();
+            vectorCameraToPlanet.multiplyScalar(distancia);
+
+            cameraTargetPositionRef.current = new THREE.Vector3();
+            cameraTargetPositionRef.current.subVectors(planet.position, vectorCameraToPlanet);
+            cameraMovingRef.current = true;
 
             //set the fixed planet data
             setFixedPlanetData(planet.planet_data);

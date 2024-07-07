@@ -31,6 +31,7 @@ export function getStellarSphere(stellar) {
         displacementScale: radius / 1500, // Escala del desplazamiento ajustada
         metalness: 0.3,
         roughness: 0.8,
+        color: isFromSolarSystem() ? 0xffffff : calculateColor(stellar),
     });
 
     // Crear objeto Mesh de Three.js para la esfera
@@ -43,4 +44,33 @@ export function getStellarSphere(stellar) {
     sphere.position.set(stellar.coordinates.x, stellar.coordinates.y, stellar.coordinates.z);
 
     return sphere;
+}
+
+
+
+
+/**
+ * Calculate Color
+ * 
+ * The function calculates the color of the sphere based on the properties of the stellar object.
+ * 
+ * @param {object} stellar - Stellar object with the properties of the sphere.
+ * @returns {number} - The hexadecimal color of the sphere.
+ */
+function calculateColor(stellar) {
+    let hash = 0;
+    for (let i = 0; i < stellar.name.length; i++) {
+        hash = stellar.name.charCodeAt(i)*i*43/7 + hash;
+    }
+
+    let color = Math.abs(hash) % 0xffffff;
+    return 0xaaaaaa + color > 0xffffff ? 0xffffff : 0xaaaaaa + color;
+}
+
+
+function isFromSolarSystem() {
+    //obtener localsolarSystem
+    let localSolarSystem = localStorage.getItem('selectedStellarSystem');  
+    localSolarSystem = parseInt(localSolarSystem);
+    return localSolarSystem === 0; 
 }
