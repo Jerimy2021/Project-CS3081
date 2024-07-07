@@ -20,12 +20,13 @@ import { getStellarSphere } from './stellarsFunctions';
 export function initializeScene(scene) {
 
     // Luz direccional para iluminar los objetos en la escena
-    const light = new THREE.DirectionalLight(0xffffff, 2.1);
-    light.position.set(0, 0, 1);
+    const light = new THREE.DirectionalLight(0xffffff, 2);
+    light.position.set(-1, 1, 1);
     scene.add(light);
 
     // Luz ambiental para proporcionar iluminación de fondo suave
     const ambientLight = new THREE.AmbientLight(0x404040); // Luz blanca suave
+    ambientLight.intensity = 10;
     scene.add(ambientLight);
 };
 
@@ -41,6 +42,20 @@ export function initializeScene(scene) {
 export function addStellars(scene, stellars, planetsRef) {
     stellars.forEach((stellar) => {
         const sphere = getStellarSphere(stellar);
+
+        console.log(sphere);
+        //añadir un dodecaedro rodeando el planeta
+        const geometry = new THREE.DodecahedronGeometry(sphere.geometry.parameters.radius * 1.5, 0);
+        const material = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true, color: 0x000000 });
+        const wireframe = new THREE.Mesh(geometry, material);
+        
+        //color de lineas del wireframe
+        wireframe.material.color.setHex(0xffffff);
+        wireframe.material.transparent = true;
+        wireframe.material.opacity = 0.15;
+        wireframe.position.set(sphere.position.x, sphere.position.y, sphere.position.z);
+        scene.add(wireframe);
+
         planetsRef.current.push(sphere);
         scene.add(sphere);
     });
@@ -101,15 +116,15 @@ export function startScene(canvasRef, rendererRef, cameraRef, sceneRef, C, D, mo
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 0.15;
 
-
     const urlHDR = new URL(texture, window.location.href).href;
 
     const loader = new RGBELoader();
     loader.load(urlHDR, function (texture) {
         //bajar brill
         texture.mapping = THREE.EquirectangularReflectionMapping;
-        scene.background = texture;
+        scene.environment = texture;
     });
+
 
     /**
      * Render
@@ -137,6 +152,7 @@ export function startScene(canvasRef, rendererRef, cameraRef, sceneRef, C, D, mo
             }
         }
 
+
         // Actualizar la orientación de la cámara según los vectores C y D
         lookRespectToVectors(C.current, D.current, camera);
 
@@ -148,7 +164,7 @@ export function startScene(canvasRef, rendererRef, cameraRef, sceneRef, C, D, mo
 
         // Rotar los planetas en la escena para efectos visuales
         for (let i = 0; i < planetsRef.current.length; i++) {
-            planetsRef.current[i].rotation.y += 0.001;
+            planetsRef.current[i].rotation.y += 0.004;
         }
 
         // Solicitar el próximo frame de animación
@@ -163,3 +179,4 @@ export function startScene(canvasRef, rendererRef, cameraRef, sceneRef, C, D, mo
         window.removeEventListener('resize', onResize);
     };
 };
+

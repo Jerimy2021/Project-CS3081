@@ -61,7 +61,10 @@ export function drawCircleAroundPlanets (topCanvasRef, planetsRef, cameraRef, C,
         ctx.setLineDash([5, 15]);
         ctx.arc(x, y, r, 0, 2 * Math.PI);
         ctx.strokeStyle = 'white';
+        //transparencia
+        ctx.globalAlpha = 0.3;
         ctx.stroke();
+        ctx.globalAlpha = 1;
     }
 
     
