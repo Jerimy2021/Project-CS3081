@@ -94,14 +94,8 @@ function UI() {
                 setVisibleInfoBool(false);
             }
         });
-
-        let deltaTime = 0;
-        let lastTime = 0;
-
         // Render function
         const render = () => {
-            lastTime = Date.now();
-            deltaTime = Date.now() - lastTime;
 
             if (!topCanvasRef.current) return;
 

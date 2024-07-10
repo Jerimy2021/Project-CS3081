@@ -46,7 +46,7 @@ export function addStellars(scene, stellars, planetsRef) {
         console.log(sphere);
         //añadir un dodecaedro rodeando el planeta
         const geometry = new THREE.DodecahedronGeometry(sphere.geometry.parameters.radius * 1.5, 0);
-        const material = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true, color: 0x000000 });
+        const material = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true});
         const wireframe = new THREE.Mesh(geometry, material);
         scene.add(sphere);
         
@@ -65,7 +65,7 @@ export function addStellars(scene, stellars, planetsRef) {
 
         const polvoList = [];
 
-        const amountParticles = sphere.geometry.parameters.radius * 30;
+        const amountParticles = sphere.geometry.parameters.radius * 30 * 1.3;
         
         for (let i = 0; i < amountParticles; i++) {
             const polvo = new THREE.Mesh(polvoGeometry, polvoMaterial);

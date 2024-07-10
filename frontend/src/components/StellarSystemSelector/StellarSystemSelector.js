@@ -86,7 +86,12 @@ function StellarSystemSelector({ stellarSystem, conatinerRef }) {
             }
             stellarSystemTexture = sum % 10 + 1;
 
-            const textureURL = serverURL + "/static/planet_textures/planet_bk" + stellarSystemTexture + ".png";
+            let textureURL = serverURL + "/static/planet_textures/planet_bk" + stellarSystemTexture + ".png";
+
+            if (stellarSystem.name === "Sun") {
+                textureURL = serverURL + "/static/star_textures/8k_sun.jpg";
+            }
+
             const texture = new THREE.TextureLoader().load(textureURL);
             const material = new THREE.MeshStandardMaterial({
                 map: texture,
@@ -94,6 +99,10 @@ function StellarSystemSelector({ stellarSystem, conatinerRef }) {
                 displacementScale: 0.1,
                 metalness: 0.3,
                 roughness: 0.8,
+                emissiveMap: stellarSystem.name === "Sun" ? texture : null,
+                emissive: stellarSystem.name === "Sun" ? new THREE.Color(0xffeeee) : new THREE.Color(0x000000),
+                emissiveIntensity: stellarSystem.name === "Sun" ? 1 : 0,
+                envMapIntensity: 0.5,
             });
 
 
@@ -107,7 +116,7 @@ function StellarSystemSelector({ stellarSystem, conatinerRef }) {
             //dodecaedro rodeando el planeta
 
             const geometryWireframe = new THREE.DodecahedronGeometry(sphere.geometry.parameters.radius * 1.5, 0);
-            const materialWireframe = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true, color: 0x000000 });
+            const materialWireframe = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true});
             const wireframe = new THREE.Mesh(geometryWireframe, materialWireframe);
 
             //color de lineas del wireframe
@@ -121,6 +130,7 @@ function StellarSystemSelector({ stellarSystem, conatinerRef }) {
 
             dodecaedroRef.current = wireframe;
             sceneRef.current.add(wireframe);
+
 
             const animate = () => {
                 if (!conatinerRef.current) return;

@@ -55,6 +55,7 @@ function Informacion({isVisible, info, infoDivRef}) {
                     <a
                     href={data.discovery_reference}
                     target="_blank"
+                    rel="noreferrer"
                     > click here to see the reference</a>
                     <label>Discovery telescope:</label>
                     <p>{data.discovery_telescope}</p>
