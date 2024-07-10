@@ -1,5 +1,5 @@
 # ignorar entornos virtuales
-project/
+unitest/
 
 
 # ignorar archivos de configuración

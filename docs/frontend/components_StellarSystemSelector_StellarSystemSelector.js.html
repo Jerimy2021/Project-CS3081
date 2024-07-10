@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/StellarSystemSelector/StellarSystemSelector.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/StellarSystemSelector/StellarSystemSelector.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module Components
+ */
+import React from 'react';
+import './StellarSystemSelector.css';
+import * as THREE from 'three';
+import { serverURL } from '../../config/config';
+
+/**
+ * Stellar System Selector
+ * 
+ * The Stellar System Selector component is a canvas that shows a 3D representation of a stellar system.
+ * 
+ * @param {Object} props - The props of the component.
+ * @param {Object} props.stellarSystem - The stellar system object to show.
+ * @param {Object} props.conatinerRef - The reference to the container div.
+ * 
+ * @returns {JSX.Element} The StellarSystemSelector component
+*/
+function StellarSystemSelector({stellarSystem, conatinerRef}) {
+    const canvasRef = React.useRef(null);
+
+    React.useEffect(() => {
+        if (stellarSystem) {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({canvas: canvasRef.current});
+            renderer.setSize(conatinerRef.current.clientWidth, conatinerRef.current.clientHeight);
+            camera.aspect = conatinerRef.current.clientWidth / conatinerRef.current.clientHeight;
+            camera.updateProjectionMatrix();
+
+            //light
+            const light = new THREE.DirectionalLight(0xffffff, 1);
+            light.position.set(0, 0, 1);
+            scene.add(light);
+
+          
+            //ambient light
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+            scene.add(ambientLight);
+
+            
+            const geometry = new THREE.SphereGeometry(1.5, 256, 256);
+            let stellarSystemTexture = stellarSystem.name;
+            let sum = 0;
+            for (let i = 0; i &lt; stellarSystemTexture.length; i++) {
+                sum += stellarSystemTexture.charCodeAt(i);
+            }
+
+            stellarSystemTexture = sum % 10 + 1;
+
+            const textureURL = serverURL + "/static/planet_textures/planet_bk" + stellarSystemTexture + ".png";
+            //random
+            const texture = new THREE.TextureLoader().load(textureURL);
+            const material = new THREE.MeshStandardMaterial({
+                map: texture,
+                displacementMap: texture,
+                displacementScale: 0.1, // Ajusta la escala del desplazamiento según la necesidad
+                metalness: 0.3,
+                roughness: 0.8,
+            });
+            const sphere = new THREE.Mesh(geometry, material);
+            scene.add(sphere);
+
+            //ad stars
+            const starsGeometry = new THREE.SphereGeometry(0.4, 24, 24);
+            const starsMaterial = new THREE.MeshBasicMaterial({color: 0xffffff});
+            
+            for (let i = 0; i &lt; 1000; i++) {
+                const star = new THREE.Mesh(starsGeometry, starsMaterial);
+                const x = (Math.random() - 0.5) * 2000;
+                const y = (Math.random() - 0.5) * 2000;
+                const z = (Math.random() - 0.5) * 2000;
+                star.position.set(x, y, z);
+                scene.add(star);
+            }
+
+
+            camera.position.z = 5;
+
+            const animate = () => {
+                if (!conatinerRef.current) return;
+                renderer.render(scene, camera);
+                //orbitar la camara alrededor de la esfera
+                camera.position.x = 5 * Math.sin(Date.now() * 0.0001);
+                camera.position.z = 5 * Math.cos(Date.now() * 0.0001);
+                camera.lookAt(sphere.position);
+
+                sphere.rotation.y += 0.001;
+                sphere.rotation.x += 0.001;
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+
+
+            //eventos de resize
+            window.addEventListener('resize', () => {
+                if (!conatinerRef.current) return;
+                camera.aspect = conatinerRef.current.clientWidth / conatinerRef.current.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(conatinerRef.current.clientWidth, conatinerRef.current.clientHeight);
+            });
+        }
+        
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [stellarSystem]);
+    return (
+        &lt;canvas ref={canvasRef} className="canvas-stellar-system-selector">&lt;/canvas>
+    );
+}
+
+export default StellarSystemSelector;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Components.html">Components</a></li><li><a href="module-Config.html">Config</a></li><li><a href="module-Hooks.html">Hooks</a></li><li><a href="module-Pages.html">Pages</a></li><li><a href="module-Utils.html">Utils</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Mon Jul 01 2024 22:01:22 GMT-0500 (hora estándar de Perú)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

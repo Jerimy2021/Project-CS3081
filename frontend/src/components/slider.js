@@ -1,6 +1,20 @@
+/**
+ * @module Components
+ */
 import React from "react";
 import "./slider.css";
 
+/**
+ * Slider
+ * 
+ * This component is the slider of the application.
+ * 
+ * @param {Object} props - The props of the component.
+ * @param {number} props.length - The length of the slider.
+ * @param {number} props.index - The index of the slider.
+ * 
+ * @returns {JSX.Element} The Slider component
+ */
 function Slider({ length, index, setIndex }) {
   const handleNext = () => {
     if (!length) return;

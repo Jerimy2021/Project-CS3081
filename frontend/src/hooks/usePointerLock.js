@@ -1,13 +1,27 @@
+/**
+ * @module Hooks
+ */
+
 import { useEffect } from 'react';
 import * as THREE from 'three';
 import { rotationMatrix } from '../utils/camaraControls'
 
-export const usePointerLock = (canvasRef, C, D, moving) => {
+/**
+ * Use pointer lock hook
+ * 
+ * This function is a hook that allows the user to move the camera using the mouse.
+ * 
+ * @param {Object} canvasRef - The reference to the canvas element
+ * @param {Object} C - The camera's direction vector
+ * @param {Object} D - The camera's up vector
+ * @param {Boolean} moving - A boolean that indicates if the camera is moving
+ * 
+ * @returns {void}
+ */
+export function usePointerLock(canvasRef, C, D, moving) {
     useEffect(() => {
-        const canvas = canvasRef.current;
-
         const onPointerLockChange = () => {
-            if (document.pointerLockElement === canvas) {
+            if (document.pointerLockElement === document.body) {
                 document.addEventListener('mousemove', onMouseMove, false);
             } else {
                 document.removeEventListener('mousemove', onMouseMove, false);
@@ -42,15 +56,19 @@ export const usePointerLock = (canvasRef, C, D, moving) => {
         };
 
         const onClick = () => {
-            canvas.requestPointerLock();
+            if (!document.pointerLockElement) {
+                document.body.requestPointerLock();
+            } else {
+                document.exitPointerLock();
+            }
         };
 
-        canvas.addEventListener('click', onClick);
+        window.addEventListener('click', onClick);
         document.addEventListener('pointerlockchange', onPointerLockChange, false);
 
 
         return () => {
-            canvas.removeEventListener('click', onClick);
+            window.removeEventListener('click', onClick);
             document.removeEventListener('pointerlockchange', onPointerLockChange, false);
             document.removeEventListener('mousemove', onMouseMove, false);
         };
