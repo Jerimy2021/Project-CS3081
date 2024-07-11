@@ -99,7 +99,7 @@ def get_planets(stellar_system):
                 ),
                 400,
             )
-        elif stellar_system.lower() == "sun":
+        elif stellar_system.lower() == "sun" or stellar_system.lower() == "earth":
             return (
                 jsonify(
                     {

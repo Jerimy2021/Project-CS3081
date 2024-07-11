@@ -24,6 +24,14 @@ export function getStellarSphere(stellar) {
     // Cargar textura desde la URL del servidor
     const texture = new THREE.TextureLoader().load(serverURL + stellar.textures.diffuse);
 
+    const textureEmmisive = null;
+
+    const emmisivevBool = stellar.textures.emmisive && stellar.textures.emissive != "";
+
+    if (emmisivevBool) {
+        textureEmmisive = new THREE.TextureLoader().load(serverURL + stellar.textures.emissive);
+    }
+
     // Configurar material estándar con textura y desplazamiento
     const material = new THREE.MeshStandardMaterial({
         map: texture,
@@ -32,6 +40,10 @@ export function getStellarSphere(stellar) {
         metalness: 0.3,
         roughness: 0.8,
         color: isFromSolarSystem() ? 0xffffff : calculateColor(stellar),
+        emissiveMap: emmisivevBool ? textureEmmisive : texture,
+        emissive: emmisivevBool ? new THREE.Color(0xffffff) : new THREE.Color(0x000000),
+        emissiveIntensity: emmisivevBool ? 1 : 0,
+        envMapIntensity: 0.5,
     });
 
     // Crear objeto Mesh de Three.js para la esfera
@@ -57,7 +69,7 @@ export function getStellarSphere(stellar) {
  * @param {object} stellar - Stellar object with the properties of the sphere.
  * @returns {number} - The hexadecimal color of the sphere.
  */
-function calculateColor(stellar) {
+export function calculateColor(stellar) {
     let hash = 0;
     for (let i = 0; i < stellar.name.length; i++) {
         hash = stellar.name.charCodeAt(i)*i*43/7 + hash;

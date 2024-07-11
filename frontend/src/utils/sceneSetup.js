@@ -5,6 +5,8 @@
 import * as THREE from 'three';
 import texture from '../assets/backgroundGalaxy.hdr';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
+import { BloomEffect, EffectComposer, EffectPass, RenderPass } from "postprocessing";
+
 
 // Importación de funciones auxiliares para el control de la cámara y el redimensionamiento
 import { lookRespectToVectors, movingKeysDown, movingKeysUp, moveCamera } from './camaraControls';
@@ -20,13 +22,13 @@ import { getStellarSphere } from './stellarsFunctions';
 export function initializeScene(scene) {
 
     // Luz direccional para iluminar los objetos en la escena
-    const light = new THREE.DirectionalLight(0xffffff, 2);
+    const light = new THREE.DirectionalLight(0xffffff, 0.8);
     light.position.set(-1, 1, 1);
     scene.add(light);
 
     // Luz ambiental para proporcionar iluminación de fondo suave
     const ambientLight = new THREE.AmbientLight(0x404040); // Luz blanca suave
-    ambientLight.intensity = 10;
+    ambientLight.intensity = 4;
     scene.add(ambientLight);
 };
 
@@ -39,7 +41,7 @@ export function initializeScene(scene) {
  * @param {Array<Object>} stellars - Stellar's array to add to the scene.
  * @param {Object} planetsRef - Context reference to the planets array in the scene.
  */
-export function addStellars(scene, stellars, planetsRef) {
+export function addStellars(scene, stellars, planetsRef, composer) {
     stellars.forEach((stellar) => {
         const sphere = getStellarSphere(stellar);
 
@@ -57,6 +59,9 @@ export function addStellars(scene, stellars, planetsRef) {
         wireframe.position.set(sphere.position.x, sphere.position.y, sphere.position.z);
         scene.add(wireframe);
 
+
+        //
+
         //añadir polvo alrededor 
         const polvoGeometry = new THREE.SphereGeometry(0.01*sphere.geometry.parameters.radius, 32, 32);
         const polvoMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
@@ -65,7 +70,11 @@ export function addStellars(scene, stellars, planetsRef) {
 
         const polvoList = [];
 
-        const amountParticles = sphere.geometry.parameters.radius * 30 * 1.3;
+        let amountParticles = sphere.geometry.parameters.radius * 30 * 1.3;
+
+        if (amountParticles > 1000) {
+            amountParticles = 1000;
+        }
         
         for (let i = 0; i < amountParticles; i++) {
             const polvo = new THREE.Mesh(polvoGeometry, polvoMaterial);
@@ -168,8 +177,19 @@ export function startScene(canvasRef, rendererRef, cameraRef, sceneRef, C, D, mo
     const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.01, 10000);
     cameraRef.current = camera;
 
+
+    //bloom effect
+    const renderScene = new RenderPass(scene, camera);
+    const effectBloom = new BloomEffect();
+    const effectPass = new EffectPass(camera, effectBloom);
+
+    const composer = new EffectComposer(renderer);
+    composer.addPass(renderScene);
+    composer.addPass(effectPass);
+    
+
     // Cargar objetos estelares (planetas) en la escena
-    addStellars(scene, planets);
+    addStellars(scene, planets, planetsRef, composer);
 
     // Inicializar la escena con cubos y luces
     initializeScene(scene);
@@ -198,6 +218,7 @@ export function startScene(canvasRef, rendererRef, cameraRef, sceneRef, C, D, mo
         scene.background = texture;
         scene.environment = texture;
     });
+
 
 
     /**
@@ -233,8 +254,9 @@ export function startScene(canvasRef, rendererRef, cameraRef, sceneRef, C, D, mo
         // Mover la cámara en función del tiempo, velocidad y aumento de velocidad
         moveCamera(deltaTime / 1000, camera, C.current, D.current, moving.current, speed, speedUp.current);
 
-        // Renderizar la escena utilizando el renderer
-        renderer.render(scene, camera);
+        // Renderizar la escena
+        //renderer.render(scene, camera);
+        composer.render();
 
         // Rotar los planetas en la escena para efectos visuales
         for (let i = 0; i < planetsRef.current.length; i++) {
