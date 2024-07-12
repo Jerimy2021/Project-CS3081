@@ -99,7 +99,7 @@ def get_planets(stellar_system):
                 ),
                 400,
             )
-        elif stellar_system.lower() == "sun":
+        elif stellar_system.lower() == "sun" or stellar_system.lower() == "earth":
             return (
                 jsonify(
                     {
@@ -293,9 +293,34 @@ def stellar_systems():
 
         # en la primera columna están los nombres
 
+        def sumchars(s):
+            return sum(ord(c) for c in s)
+        
+        def getTextures(name):
+            if name == "Sun":
+                return "/static/star_textures/8k_sun.jpg"
+            return "/static/planet_textures/planet_bk" + str(sumchars(name) % quant_textures + 1) + ".png"
+
         stellar_systems = response_data[1:]
         stellar_systems = [
-            {"name": stellar_system[0], "num_planets": int(stellar_system[1])}
+            {
+                "name": stellar_system[0], 
+                "num_planets": int(stellar_system[1]),
+                "textures": {
+                    "diffuse": getTextures(stellar_system[0]),
+                    "normal": "",
+                    "specular": "",
+                    "emissive": getTextures(stellar_system[0]),
+                    "opacity": "",
+                    "ambient": "",
+                    },
+                "coordinates": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "radius": 1000.0,
+            }
             for stellar_system in stellar_systems
         ]
 
@@ -303,6 +328,28 @@ def stellar_systems():
         stellar_systems = sorted(
             stellar_systems, key=lambda x: x["num_planets"], reverse=True
         )
+
+        # insertar el sol
+
+        stellar_systems.insert(0, {
+            "name": "Sun",
+            "num_planets": 8,
+            "textures": {
+                "diffuse": getTextures("Sun"),
+                "normal": "",
+                "specular": "",
+                "emissive": getTextures("Sun"),
+                "opacity": "",
+                "ambient": "",
+            },
+            "coordinates": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "radius": 1000.0,
+        })
+
         return (
             jsonify(
                 {

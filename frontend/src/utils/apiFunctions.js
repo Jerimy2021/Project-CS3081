@@ -45,12 +45,6 @@ export function getStellarSystems(setStellarSystems) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                const solar_system = {
-                    name: "Sun",
-                    num_planets: 8, //(mercury, venus, earth, mars, jupiter, saturn, uranus, neptune)
-                }
-                // Insertar el sistema solar como primer elemento
-                data.data.stellar_systems.unshift(solar_system);
                 setStellarSystems(data.data.stellar_systems);
                 
                 // Guardar en el almacenamiento local

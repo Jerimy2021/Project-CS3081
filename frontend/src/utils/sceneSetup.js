@@ -6,6 +6,16 @@ import * as THREE from 'three';
 import texture from '../assets/backgroundGalaxy.hdr';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 
+import { 
+    EffectComposer, 
+    EffectPass, 
+    RenderPass, 
+    GodRaysEffect 
+} from "postprocessing";
+
+import { serverURL } from '../config/config';
+
+
 // Importación de funciones auxiliares para el control de la cámara y el redimensionamiento
 import { lookRespectToVectors, movingKeysDown, movingKeysUp, moveCamera } from './camaraControls';
 import { handleResize } from './resizeHandler';
@@ -20,13 +30,13 @@ import { getStellarSphere } from './stellarsFunctions';
 export function initializeScene(scene) {
 
     // Luz direccional para iluminar los objetos en la escena
-    const light = new THREE.DirectionalLight(0xffffff, 2);
+    const light = new THREE.DirectionalLight(0xffffff, 0.8);
     light.position.set(-1, 1, 1);
     scene.add(light);
 
     // Luz ambiental para proporcionar iluminación de fondo suave
     const ambientLight = new THREE.AmbientLight(0x404040); // Luz blanca suave
-    ambientLight.intensity = 10;
+    ambientLight.intensity = 4;
     scene.add(ambientLight);
 };
 
@@ -39,24 +49,41 @@ export function initializeScene(scene) {
  * @param {Array<Object>} stellars - Stellar's array to add to the scene.
  * @param {Object} planetsRef - Context reference to the planets array in the scene.
  */
-export function addStellars(scene, stellars, planetsRef) {
+export function addStellars(scene, stellars, planetsRef, composer, cameraRef) {
     stellars.forEach((stellar) => {
         const sphere = getStellarSphere(stellar);
 
-        console.log(sphere);
         //añadir un dodecaedro rodeando el planeta
         const geometry = new THREE.DodecahedronGeometry(sphere.geometry.parameters.radius * 1.5, 0);
         const material = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true});
         const wireframe = new THREE.Mesh(geometry, material);
         scene.add(sphere);
         
-        //color de lineas del wireframe
-        wireframe.material.color.setHex(0xffffff);
-        wireframe.material.transparent = true;
-        wireframe.material.opacity = 0.15;
-        wireframe.position.set(sphere.position.x, sphere.position.y, sphere.position.z);
-        scene.add(wireframe);
+        if (!stellar.star || stellar.star !== true) {
+            //color de lineas del wireframe
+            wireframe.material.color.setHex(0xffffff);
+            wireframe.material.transparent = true;
+            wireframe.material.opacity = 0.01;
+            wireframe.position.set(sphere.position.x, sphere.position.y, sphere.position.z);
+            scene.add(wireframe);
+        }
 
+
+        //añadir god ray effect al composer
+        if (stellar.star && stellar.star === true) {
+            const godRaysEffect = new GodRaysEffect(cameraRef, sphere, {
+                resolutionScale: 0.5,
+                density: 0.96,
+                decay: 0.93,
+                weight: 0.3,
+                samples: 60
+            });
+
+            const effectPassGodRays = new EffectPass(cameraRef, godRaysEffect);
+            composer.addPass(effectPassGodRays);
+
+            console.log('God rays added');
+        }
         //añadir polvo alrededor 
         const polvoGeometry = new THREE.SphereGeometry(0.01*sphere.geometry.parameters.radius, 32, 32);
         const polvoMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
@@ -65,7 +92,15 @@ export function addStellars(scene, stellars, planetsRef) {
 
         const polvoList = [];
 
-        const amountParticles = sphere.geometry.parameters.radius * 30 * 1.3;
+        let amountParticles = sphere.geometry.parameters.radius * 30 * 1.3;
+
+        if (amountParticles > 1000) {
+            amountParticles = 1000;
+        }
+
+        if (stellar.star && stellar.star === true) {
+            amountParticles = 0;
+        }
         
         for (let i = 0; i < amountParticles; i++) {
             const polvo = new THREE.Mesh(polvoGeometry, polvoMaterial);
@@ -125,14 +160,60 @@ export function addStellars(scene, stellars, planetsRef) {
 
         setInterval(animatePolvo, 1000 / 60);
 
-
-
-
-
-
+        
         planetsRef.current.push(sphere);
     });
 };
+
+
+
+export function loadHost(sceneRef, planetsRef, composerRef, cameraRef, stellar_systems, selected_stellar_system) {
+    const host = stellar_systems[selected_stellar_system];
+    console.log('Selected stellar system:', selected_stellar_system);
+    console.log('Stellar systems:', stellar_systems);
+    console.log('Host:', host);
+
+    const textureUrl = serverURL + host.textures.diffuse;
+    const texture = new THREE.TextureLoader().load(textureUrl);
+
+    const material = new THREE.MeshStandardMaterial({
+        map: texture,
+        displacementMap: texture,
+        displacementScale: 0.1,
+        metalness: 0.3,
+        roughness: 0.8,
+        emissiveMap: texture,
+        emissive: host.name === "Sun" ? new THREE.Color(0xffeeee) : new THREE.Color(0xffffff),
+        emissiveIntensity: 0.5,
+        envMapIntensity: 0.5,
+    });
+
+    const geometry = new THREE.SphereGeometry(host.radius, 64, 64);
+
+
+    const hostSphere = new THREE.Mesh(geometry, material);
+
+    sceneRef.current.add(hostSphere);
+
+
+    // //añadir god ray effect al composer
+    const godRaysEffect = new GodRaysEffect(cameraRef.current, hostSphere, {
+        resolutionScale: 0.5,
+        density: 0.96,
+        decay: 0.93,
+        weight: 0.3,
+        samples: 60
+    });
+
+    const effectPassGodRays = new EffectPass(cameraRef, godRaysEffect);
+    composerRef.current.addPass(effectPassGodRays);
+
+    console.log('God rays added: HOST');
+
+    planetsRef.current.push(hostSphere);
+}
+
+
 
 /**
  * Start Scene
@@ -154,7 +235,7 @@ export function addStellars(scene, stellars, planetsRef) {
  * @param {Number} maxSpeedUp - Maximum speed up value.
  * @returns {Function} - Function to clean the event listeners.
  */
-export function startScene(canvasRef, rendererRef, cameraRef, sceneRef, C, D, moving, speed, planets, planetsRef, speedUp, speedingUp, maxSpeedUp) {
+export function startScene(canvasRef, rendererRef, cameraRef, sceneRef, C, D, moving, speed, planets, planetsRef, speedUp, speedingUp, maxSpeedUp, composerRef, stellar_systems, selected_stellar_system) {
     // Iniciar el renderer de Three.js con el canvas
     const canvas = canvasRef.current;
     const renderer = new THREE.WebGLRenderer({ canvas });
@@ -165,17 +246,26 @@ export function startScene(canvasRef, rendererRef, cameraRef, sceneRef, C, D, mo
     sceneRef.current = scene;
 
     // Configurar la cámara
-    const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.01, 10000);
+    const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.01, -1);
+    camera.position.set(-1, 0, 0);
     cameraRef.current = camera;
 
+
+    //bloom effect
+    const renderScene = new RenderPass(scene, camera);
+    const composer = new EffectComposer(renderer);
+    composer.addPass(renderScene);
+    composerRef.current = composer;
+    
+
     // Cargar objetos estelares (planetas) en la escena
-    addStellars(scene, planets);
+    addStellars(scene, planets, planetsRef, composer, camera);
 
     // Inicializar la escena con cubos y luces
     initializeScene(scene);
 
     // Manejar el redimensionamiento de la ventana
-    const onResize = () => handleResize(renderer, camera, canvas);
+    const onResize = () => handleResize(renderer, camera, canvas, composer);
     window.addEventListener('resize', onResize);
     onResize();
 
@@ -198,6 +288,7 @@ export function startScene(canvasRef, rendererRef, cameraRef, sceneRef, C, D, mo
         scene.background = texture;
         scene.environment = texture;
     });
+
 
 
     /**
@@ -233,8 +324,9 @@ export function startScene(canvasRef, rendererRef, cameraRef, sceneRef, C, D, mo
         // Mover la cámara en función del tiempo, velocidad y aumento de velocidad
         moveCamera(deltaTime / 1000, camera, C.current, D.current, moving.current, speed, speedUp.current);
 
-        // Renderizar la escena utilizando el renderer
-        renderer.render(scene, camera);
+        // Renderizar la escena
+        //renderer.render(scene, camera);
+        composer.render();
 
         // Rotar los planetas en la escena para efectos visuales
         for (let i = 0; i < planetsRef.current.length; i++) {
