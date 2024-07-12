@@ -7,10 +7,8 @@ import * as THREE from 'three';
 import { serverURL } from '../../config/config';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 import backgroundImage from '../../assets/backgroundGalaxy.hdr';
-import { calculateColor } from '../../utils/stellarsFunctions';
 
 import { 
-    BloomEffect, 
     EffectComposer, 
     EffectPass, 
     RenderPass, 
@@ -115,18 +113,10 @@ function StellarSystemSelector({ stellarSystem, conatinerRef }) {
 
 
             const geometry = new THREE.SphereGeometry(1.5, 256, 256);
-            let stellarSystemTexture = stellarSystem.name;
-            let sum = 0;
-            for (let i = 0; i < stellarSystemTexture.length; i++) {
-                sum += stellarSystemTexture.charCodeAt(i);
-            }
-            stellarSystemTexture = sum % 10 + 1;
+            
 
-            let textureURL = serverURL + "/static/star_textures/origin/planet_bk" + stellarSystemTexture + ".png";
-
-            if (stellarSystem.name === "Sun") {
-                textureURL = serverURL + "/static/star_textures/8k_sun.jpg";
-            }
+            console.log(stellarSystem)
+            let textureURL = serverURL + stellarSystem.textures.diffuse;
 
             const texture = new THREE.TextureLoader().load(textureURL);
             

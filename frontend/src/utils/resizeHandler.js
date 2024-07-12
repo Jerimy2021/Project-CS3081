@@ -12,7 +12,7 @@
  * @param {HTMLCanvasElement} canvas - The canvas element of the scene.
  * @returns {void}
  */
-export function handleResize(renderer, camera, canvas) {
+export function handleResize(renderer, camera, canvas, composer) {
     const width = canvas.clientWidth; // Ancho del canvas
     const height = canvas.clientHeight; // Alto del canvas
 
@@ -24,4 +24,9 @@ export function handleResize(renderer, camera, canvas) {
 
     // Actualizar la matriz de proyección de la cámara con el nuevo aspect ratio
     camera.updateProjectionMatrix();
+
+    // Actualizar el tamaño del render target del composer
+    if (composer) {
+        composer.setSize(width, height);
+    }
 };

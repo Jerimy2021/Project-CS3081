@@ -116,49 +116,6 @@ solar_system = {
     "num_planets": 8,
     "planets": [
         {
-            "name": "Sun",
-            "distance": 0.39,
-            "ra": "",
-            "dec": "",
-            "orbsmax": 0.3871,
-            "orbeccen": 0.2056,
-            "orbincl": 7.005,
-            "orblper": 77.456,
-            "orbtper": 88.0,
-            "sy_dist": 0,
-            "radius_jupiter": 0.0553,
-            "radius_earth": 0.3829,
-            "discovery_year": "",
-            "discovery_method": "",
-            "discovery_reference": "",
-            "discovery_telescope": "",
-            "host_name": "Sun",
-            "orbital_period": 0.24,
-            "planet_mass": 0.0553,
-            "planet_density": 5.427,
-            "planet_eqt": 340.0,
-            "planet_tranmid": "",
-            "stellar_lum": 1.0,
-            "stellar_age": 4.6,
-            "stellar_mass": 1.0,
-            "coordinates": {
-                "x": 0,
-                "y": 0,
-                "z": 0
-            },
-            "textures": {
-                "diffuse": "/static/star_textures/8k_sun.jpg",
-                "normal": "",
-                "specular": "",
-                "emissive": "/static/star_textures/8k_sun.jpg",
-                "opacity": "",
-                "ambient": ""
-            },
-
-            "radius": 100.0,
-            "star": True
-        },
-        {
             "name": "Mercury",
             "distance": 0.39,
             "ra": "",

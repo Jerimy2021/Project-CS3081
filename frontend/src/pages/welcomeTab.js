@@ -27,7 +27,6 @@ function WelcomeTab() {
     //cargar de local storage
     const stellarSystemsJSON = JSON.parse(localStorage.getItem('stellarSystems'));
 
-    console.log(stellarSystemsJSON)
     if (stellarSystemsJSON) {
       setStellarSystems(stellarSystemsJSON);
     } else {

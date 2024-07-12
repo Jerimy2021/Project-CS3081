@@ -4,11 +4,9 @@
 import React, { useRef, useEffect } from 'react';
 
 
-import { initializeScene, startScene } from '../../utils/sceneSetup';
+import { initializeScene, loadHost, startScene } from '../../utils/sceneSetup';
 import { usePointerLock } from '../../hooks/usePointerLock';
 import { addStellars } from '../../utils/sceneSetup';
-
-
 import '../ThreeDInterface/ThreeDInterface.css';
 
 /**
@@ -30,7 +28,7 @@ import '../ThreeDInterface/ThreeDInterface.css';
  * @returns {JSX.Element} The ThreeDInterface component
  * 
     */  
-function ThreeDInterface({ planets, cameraRef, sceneRef, C, D, topCanvasRef, planetsRef, speedUp, maxSpeedUp }) {
+function ThreeDInterface({ planets, cameraRef, sceneRef, C, D, topCanvasRef, planetsRef, speedUp, maxSpeedUp, stellarSystems, selectedStellarSystem, composerRef }) {
     // Refs
     const canvasRef = useRef(null);
     const rendererRef = useRef(null);
@@ -52,18 +50,28 @@ function ThreeDInterface({ planets, cameraRef, sceneRef, C, D, topCanvasRef, pla
 
     // Initialize scene
     useEffect(() => {
-        startScene(canvasRef, rendererRef, cameraRef, sceneRef, C, D, moving, speed, planets, planetsRef, speedUp, speedingUp, maxSpeedUp);
+        startScene(canvasRef, rendererRef, cameraRef, sceneRef, C, D, moving, speed, planets, planetsRef, speedUp, speedingUp, maxSpeedUp, composerRef, stellarSystems, selectedStellarSystem);
     
     //eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
-        if (sceneRef.current) { //null
+        console.log(planets)
+        console.log(stellarSystems)
+        console.log(selectedStellarSystem)
+        if (sceneRef.current && cameraRef.current && composerRef.current && rendererRef.current && stellarSystems.length > 0) {
             sceneRef.current.children = []; //vaciar la escena
             planetsRef.current = []; //vaciar los planetas
             initializeScene(sceneRef.current); //inicializar la escena de nuevo
-            addStellars(sceneRef.current, planets, planetsRef); //añadir los planetas
+            addStellars(sceneRef.current, planets, planetsRef, composerRef.current, cameraRef.current); //añadir los planetas
+            loadHost(sceneRef, planetsRef, composerRef, cameraRef, stellarSystems, selectedStellarSystem);
         }
+
+        // press F after loaded
+        setTimeout(() => {
+            const event = new KeyboardEvent('keydown', { key: 'f' });
+            window.dispatchEvent(event);
+        }, 500);
     //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [planets]);
 

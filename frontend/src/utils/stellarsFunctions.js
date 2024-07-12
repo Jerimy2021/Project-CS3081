@@ -19,14 +19,14 @@ export function getStellarSphere(stellar) {
     radius = parseFloat(radius) * 1000;
 
     // Crear geometría de la esfera
-    const geometry = new THREE.SphereGeometry(radius / 100, 128, 128);
+    const geometry = new THREE.SphereGeometry(radius / 100, 64, 64);
 
     // Cargar textura desde la URL del servidor
     const texture = new THREE.TextureLoader().load(serverURL + stellar.textures.diffuse);
 
-    const textureEmmisive = null;
+    let textureEmmisive = null;
 
-    const emmisivevBool = stellar.textures.emmisive && stellar.textures.emissive != "";
+    const emmisivevBool = stellar.textures.emmisive && stellar.textures.emissive !== "";
 
     if (emmisivevBool) {
         textureEmmisive = new THREE.TextureLoader().load(serverURL + stellar.textures.emissive);
@@ -41,8 +41,8 @@ export function getStellarSphere(stellar) {
         roughness: 0.8,
         color: isFromSolarSystem() ? 0xffffff : calculateColor(stellar),
         emissiveMap: emmisivevBool ? textureEmmisive : texture,
-        emissive: emmisivevBool ? new THREE.Color(0xffffff) : new THREE.Color(0x000000),
-        emissiveIntensity: emmisivevBool ? 1 : 0,
+        emissive: (emmisivevBool || (stellar.star && stellar.star === true)) ? new THREE.Color(0xffffff) : new THREE.Color(0x000000),
+        emissiveIntensity: (emmisivevBool || (stellar.star && stellar.star === true)) ? 0.60 : 0,
         envMapIntensity: 0.5,
     });
 

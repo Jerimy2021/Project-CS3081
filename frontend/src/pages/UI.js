@@ -48,7 +48,7 @@ function loadData(setStellarSystems, setSelectedStellarSystem, setPlanets) {
  * @returns {JSX.Element} JSX Element
  */
 function UI() {
-    const [stellar_systems, setStellarSystems] = useState([{ name: "Undefined" }]);
+    const [stellar_systems, setStellarSystems] = useState([]);
     const [selected_stellar_system, setSelectedStellarSystem] = useState(0);
     const [planets, setPlanets] = useState([]);
 
@@ -80,6 +80,8 @@ function UI() {
     // emergent windows
     const [visibleInfoBool, setVisibleInfoBool] = useState(false);
     const visibleInfBoolRef = useRef(false);
+
+    const composerRef = useRef(null);
 
     // Load planets
     useEffect(() => {
@@ -131,7 +133,7 @@ function UI() {
             getPlanets(setPlanets, stellar_systems[selected_stellar_system].name);
         }
     //eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selected_stellar_system]);
+    }, [selected_stellar_system, stellar_systems]);
 
 
     
@@ -140,7 +142,7 @@ function UI() {
         <div className="UI jalar-a-derecha">
             <LoadWindow loaded={planetsRef.current.length > 0} />
             <canvas className="topCanvas" ref={topCanvasRef} />
-            <ThreeDInterface planets={planets} cameraRef={cameraRef} sceneRef={sceneRef} C={C} D={D} topCanvasRef={infoDivRef} planetsRef={planetsRef} speedUp={speedUp} maxSpeedUp={maxSpeedUp} />
+            <ThreeDInterface planets={planets} cameraRef={cameraRef} sceneRef={sceneRef} C={C} D={D} topCanvasRef={infoDivRef} planetsRef={planetsRef} speedUp={speedUp} maxSpeedUp={maxSpeedUp} stellarSystems={stellar_systems} selectedStellarSystem={selected_stellar_system} composerRef={composerRef} />
             <div className="controles">
                 <p>Press K to 'Control key menu'</p>
                 <p>Press F to 'Focus on a planet'</p>
