@@ -193,6 +193,8 @@ export function loadHost(sceneRef, planetsRef, composerRef, cameraRef, stellar_s
 
     const hostSphere = new THREE.Mesh(geometry, material);
 
+    hostSphere.planet_data = host;
+
     sceneRef.current.add(hostSphere);
 
 
