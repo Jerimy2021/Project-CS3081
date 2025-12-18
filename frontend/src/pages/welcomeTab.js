@@ -27,9 +27,15 @@ function WelcomeTab() {
     //cargar de local storage
     const stellarSystemsJSON = JSON.parse(localStorage.getItem('stellarSystems'));
 
-    if (stellarSystemsJSON) {
+    // Verificar si los datos están completos (tienen textures)
+    if (stellarSystemsJSON && stellarSystemsJSON.length > 0 && stellarSystemsJSON[0].textures) {
       setStellarSystems(stellarSystemsJSON);
     } else {
+      // Si los datos están incompletos, limpiar localStorage y recargar
+      if (stellarSystemsJSON) {
+        console.log('Datos incompletos en localStorage, recargando...');
+        localStorage.removeItem('stellarSystems');
+      }
       getStellarSystems(setStellarSystems);
     }
   }, []);
